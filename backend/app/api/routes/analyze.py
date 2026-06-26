@@ -69,7 +69,9 @@ def analyze_submission():
         
         context = retrieve_context(vector_store, RETRIEVAL_QUERIES, top_k=2)
         
-        suggested_skills = detect_skills(context)
+        lang_names = [l["language"] for l in languages]
+        fw_names = [f["framework"] for f in frameworks]
+        suggested_skills = detect_skills(context, detected_languages=lang_names, detected_frameworks=fw_names)
         print(f"Suggested skills: {suggested_skills}", flush=True)
         print(f"Context length: {len(context)} characters", flush=True)
         

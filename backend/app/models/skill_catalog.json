@@ -3,186 +3,282 @@
     "skill_id": "sk-001",
     "skill_name": "FastAPI",
     "category": "Backend Framework",
-    "description": "Building APIs with FastAPI framework in Python."
+    "description": "Building high-performance APIs with FastAPI framework in Python."
   },
   {
     "skill_id": "sk-002",
     "skill_name": "Flask",
     "category": "Backend Framework",
-    "description": "Building APIs with Flask framework in Python."
+    "description": "Building microservices and APIs with Flask framework in Python."
   },
   {
     "skill_id": "sk-003",
     "skill_name": "Django",
     "category": "Backend Framework",
-    "description": "Building web apps with Django framework in Python."
+    "description": "Building full-stack web apps and admin portals with Django framework in Python."
   },
   {
     "skill_id": "sk-004",
     "skill_name": "Express.js",
     "category": "Backend Framework",
-    "description": "Building backend APIs using Express in Node.js."
+    "description": "Building backend APIs using Express in Node.js/JavaScript."
   },
   {
     "skill_id": "sk-005",
     "skill_name": "Spring Boot",
     "category": "Backend Framework",
-    "description": "Building backend applications using Spring Boot in Java."
+    "description": "Building enterprise backend applications using Spring Boot in Java."
   },
   {
     "skill_id": "sk-006",
-    "skill_name": "React",
-    "category": "Frontend Framework",
-    "description": "Building interactive user interfaces using React."
+    "skill_name": "NestJS",
+    "category": "Backend Framework",
+    "description": "Creating scalable, enterprise Node.js applications with NestJS and TypeScript."
   },
   {
     "skill_id": "sk-007",
+    "skill_name": "React",
+    "category": "Frontend Framework",
+    "description": "Building interactive single-page user interfaces using React."
+  },
+  {
+    "skill_id": "sk-008",
     "skill_name": "Next.js",
     "category": "Frontend Framework",
     "description": "Building server-rendered React applications using Next.js."
   },
   {
+    "skill_id": "sk-009",
+    "skill_name": "Vue.js",
+    "category": "Frontend Framework",
+    "description": "Developing modern web interfaces using Vue.js."
+  },
+  {
+    "skill_id": "sk-010",
+    "skill_name": "Angular",
+    "category": "Frontend Framework",
+    "description": "Building robust, structured enterprise web applications using Angular."
+  },
+  {
     "skill_id": "sk-011",
     "skill_name": "Firebase",
     "category": "Database",
-    "description": "Integrating Firebase Backend-as-a-Service, Auth, or Firestore."
+    "description": "Integrating Firebase Backend-as-a-Service, Authentication, or Firestore."
   },
   {
     "skill_id": "sk-012",
     "skill_name": "SQLite",
     "category": "Database",
-    "description": "Using SQLite for local database storage and mobile apps."
+    "description": "Using SQLite for lightweight local database storage, mobile apps, or local testing."
   },
   {
     "skill_id": "sk-013",
     "skill_name": "SQL Database Design",
     "category": "Database",
-    "description": "Writing SQL schemas, database migrations, and queries."
+    "description": "Writing SQL schemas, database migrations, and queries for MySQL, PostgreSQL, or SQL Server."
   },
   {
     "skill_id": "sk-014",
     "skill_name": "MongoDB",
     "category": "Database",
-    "description": "Integrating and querying MongoDB databases."
+    "description": "Integrating and querying MongoDB document-oriented databases."
+  },
+  {
+    "skill_id": "sk-015",
+    "skill_name": "PostgreSQL",
+    "category": "Database",
+    "description": "Designing schemas and optimizing performance using PostgreSQL databases."
+  },
+  {
+    "skill_id": "sk-016",
+    "skill_name": "Redis",
+    "category": "Database",
+    "description": "Implementing Redis for in-memory caching, message queues, and session storage."
   },
   {
     "skill_id": "sk-020",
     "skill_name": "JWT Authentication",
     "category": "Security",
-    "description": "Implementing JSON Web Token based user authentication and authorization."
+    "description": "Implementing JSON Web Token based user authentication and token claims authorization."
   },
   {
     "skill_id": "sk-021",
     "skill_name": "REST API Design",
-    "category": "API",
-    "description": "Designing clean, standard RESTful endpoints."
+    "category": "API & Architecture",
+    "description": "Designing clean, standard, documentable RESTful endpoints."
   },
   {
     "skill_id": "sk-022",
+    "skill_name": "GraphQL",
+    "category": "API & Architecture",
+    "description": "Creating and querying dynamic Graph APIs using GraphQL."
+  },
+  {
+    "skill_id": "sk-023",
+    "skill_name": "WebSockets",
+    "category": "API & Architecture",
+    "description": "Enabling real-time, bi-directional communication using WebSockets."
+  },
+  {
+    "skill_id": "sk-024",
+    "skill_name": "Microservices",
+    "category": "API & Architecture",
+    "description": "Architecting decoupled, domain-driven services communicating via RPC, HTTP, or message brokers."
+  },
+  {
+    "skill_id": "sk-025",
+    "skill_name": "OAuth 2.0",
+    "category": "Security",
+    "description": "Implementing federated login or API access delegation using OAuth 2.0 protocols."
+  },
+  {
+    "skill_id": "sk-026",
     "skill_name": "Pytest",
     "category": "Testing",
-    "description": "Writing automated tests with Pytest."
+    "description": "Writing automated, scalable python unit and integration tests with Pytest."
+  },
+  {
+    "skill_id": "sk-027",
+    "skill_name": "Jest",
+    "category": "Testing",
+    "description": "Testing frontend React/JavaScript codebases using Jest and React Testing Library."
   },
   {
     "skill_id": "sk-034",
     "skill_name": "Docker",
     "category": "DevOps",
-    "description": "Containerizing applications using Dockerfiles and Docker Compose."
+    "description": "Containerizing applications and setting up multi-container platforms using Dockerfiles and Docker Compose."
   },
   {
     "skill_id": "sk-035",
     "skill_name": "Kubernetes",
     "category": "DevOps",
-    "description": "Orchestrating container deployment and management using Kubernetes."
+    "description": "Orchestrating container deployment, autoscaling, and cluster management using Kubernetes."
   },
   {
     "skill_id": "sk-036",
     "skill_name": "CI/CD",
     "category": "DevOps",
-    "description": "Setting up continuous integration and continuous deployment pipelines."
+    "description": "Setting up continuous integration and continuous deployment pipelines (GitHub Actions, GitLab CI, Jenkins)."
   },
   {
     "skill_id": "sk-037",
     "skill_name": "Git",
     "category": "DevOps",
-    "description": "Version control and collaboration using Git."
+    "description": "Collaborative version control and branching strategies using Git."
   },
   {
     "skill_id": "sk-038",
     "skill_name": "Linux",
     "category": "DevOps",
-    "description": "Operating system and shell scripting with Linux."
+    "description": "System administration, terminal workflows, and bash scripting in Linux environments."
   },
   {
     "skill_id": "sk-039",
     "skill_name": "Terraform",
     "category": "DevOps",
-    "description": "Provisioning infrastructure as code using Terraform."
+    "description": "Provisioning infrastructure as code (IaC) across multiple cloud providers using Terraform."
   },
   {
     "skill_id": "sk-040",
     "skill_name": "Nginx",
     "category": "DevOps",
-    "description": "Configuring Nginx as a reverse proxy, load balancer, or web server."
+    "description": "Configuring Nginx as a reverse proxy, load balancer, SSL terminator, or static file web server."
   },
   {
     "skill_id": "sk-041",
     "skill_name": "Machine Learning",
-    "category": "Data & AI",
-    "description": "Implementing predictive models, training workflows, and machine learning pipelines."
+    "category": "Data & ML",
+    "description": "Implementing predictive models, training pipelines, and feature engineering."
   },
   {
     "skill_id": "sk-042",
     "skill_name": "Data Analysis",
-    "category": "Data & AI",
-    "description": "Analyzing datasets, performing statistical analyses, and plotting data."
+    "category": "Data & ML",
+    "description": "Analyzing data tables, executing statistical methods, and generating data charts."
   },
   {
     "skill_id": "sk-043",
     "skill_name": "Pandas",
-    "category": "Data & AI",
-    "description": "Using Pandas for data manipulation, cleaning, and analysis in Python."
+    "category": "Data & ML",
+    "description": "Manipulating, cleaning, and preprocessing tabular datasets using Pandas."
   },
   {
     "skill_id": "sk-044",
     "skill_name": "NumPy",
-    "category": "Data & AI",
-    "description": "Scientific computing and array operations using NumPy."
+    "category": "Data & ML",
+    "description": "Performing scientific computing and fast array operations using NumPy."
   },
   {
     "skill_id": "sk-045",
     "skill_name": "TensorFlow",
-    "category": "Data & AI",
-    "description": "Building and deploying deep learning models using TensorFlow."
+    "category": "Data & ML",
+    "description": "Building, training, and serving deep learning neural networks using TensorFlow or Keras."
   },
   {
     "skill_id": "sk-046",
     "skill_name": "PyTorch",
-    "category": "Data & AI",
-    "description": "Developing neural network models using PyTorch."
+    "category": "Data & ML",
+    "description": "Developing neural network architectures and model training scripts using PyTorch."
   },
   {
     "skill_id": "sk-047",
-    "skill_name": "React Native",
-    "category": "Mobile",
-    "description": "Building cross-platform mobile apps using React Native."
+    "skill_name": "Scikit-Learn",
+    "category": "Data & ML",
+    "description": "Implementing classic regression, classification, clustering, and preprocessing pipelines using Scikit-Learn."
   },
   {
     "skill_id": "sk-048",
-    "skill_name": "Flutter",
-    "category": "Mobile",
-    "description": "Building cross-platform mobile applications using Flutter and Dart."
+    "skill_name": "LLM Integration",
+    "category": "Data & ML",
+    "description": "Building generative AI features using large language models, prompt engineering, or framework orchestrators like LangChain."
   },
   {
     "skill_id": "sk-049",
-    "skill_name": "Android Development",
-    "category": "Mobile",
-    "description": "Building native Android apps."
+    "skill_name": "OpenCV",
+    "category": "Data & ML",
+    "description": "Processing video feeds, image manipulations, and computer vision workflows using OpenCV."
   },
   {
     "skill_id": "sk-050",
     "skill_name": "Cybersecurity",
     "category": "Security",
-    "description": "Applying security practices, vulnerability scanning, and threat mitigation."
+    "description": "Auditing application security, vulnerability patching, threat modeling, and encryption standards."
+  },
+  {
+    "skill_id": "sk-051",
+    "skill_name": "React Native",
+    "category": "Mobile",
+    "description": "Building cross-platform mobile apps for iOS and Android using React Native."
+  },
+  {
+    "skill_id": "sk-052",
+    "skill_name": "Flutter",
+    "category": "Mobile",
+    "description": "Developing cross-platform mobile applications with high-fidelity UI using Flutter and Dart."
+  },
+  {
+    "skill_id": "sk-053",
+    "skill_name": "Android Development",
+    "category": "Mobile",
+    "description": "Building native Android apps using Kotlin or Java."
+  },
+  {
+    "skill_id": "sk-054",
+    "skill_name": "iOS Development",
+    "category": "Mobile",
+    "description": "Building native iOS applications using Swift and UIKit/SwiftUI."
+  },
+  {
+    "skill_id": "sk-060",
+    "skill_name": "AWS",
+    "category": "Cloud Platform",
+    "description": "Deploying servers, serverless architectures, networks, and managed databases on Amazon Web Services."
+  },
+  {
+    "skill_id": "sk-061",
+    "skill_name": "Google Cloud",
+    "category": "Cloud Platform",
+    "description": "Deploying apps, containers, and data warehousing pipelines on Google Cloud Platform."
   }
 ]

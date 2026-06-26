@@ -8,11 +8,19 @@ let barChart = null;
 function loadPieChart(skills) {
     if (!Array.isArray(skills)) return;
 
-    const labels = skills.map(skill => skill.skill_name || "Unknown Skill");
+    // Group skills by category to represent the distribution
+    const categoryGroups = {};
+    skills.forEach(skill => {
+        const cat = skill.category || "General";
+        const confidence = typeof skill.confidence === 'number' ? skill.confidence : 0;
+        if (!categoryGroups[cat]) {
+            categoryGroups[cat] = 0;
+        }
+        categoryGroups[cat] += Math.round(confidence * 100);
+    });
 
-    const values = skills.map(skill =>
-        Math.round((typeof skill.confidence === 'number' ? skill.confidence : 0) * 100)
-    );
+    const labels = Object.keys(categoryGroups);
+    const values = Object.values(categoryGroups);
 
     if (pieChart) {
         pieChart.destroy();

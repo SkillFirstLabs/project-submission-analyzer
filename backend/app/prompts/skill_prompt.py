@@ -9,6 +9,10 @@ For each detected skill, provide:
 """
 
 SKILL_USER_PROMPT_TEMPLATE = """
+=== STATIC ANALYSIS EVIDENCE ===
+Languages detected in codebase: {detected_languages}
+Frameworks/Libraries detected in codebase: {detected_frameworks}
+
 === SKILL CATALOG ===
 {catalog}
 
@@ -16,7 +20,9 @@ SKILL_USER_PROMPT_TEMPLATE = """
 {context}
 
 === INSTRUCTIONS ===
-Analyze the code and detect matching skills from the catalog.
+Analyze the codebase context and detect matching skills from the catalog.
+Use the static analysis evidence above to guide and constrain your skill detection. Verify that any suggested skills are consistent with the languages and frameworks/libraries detected.
+For example, do not suggest "JWT Authentication" or frontend frameworks if they are not explicitly present in the context or static analysis evidence.
 Return a JSON array of skills matching the following structure:
 [
   {{
