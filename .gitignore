@@ -1,0 +1,30 @@
+# Python environment files
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code
+.vscode/
+
+# Python distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Temporary files
+*.log
+*.sqlite3
+*.sqlite
+*.db
+*.pot
+*.mo
+
+# FastAPI / Uvicorn / app temp
+temp/
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
