@@ -1,0 +1,21 @@
+Cross-examine the claimed project outcomes against the project Evidence Map. Verify which outcomes are fully implemented, partially completed, or entirely missing.
+
+Claimed Outcomes:
+{outcomes}
+
+Project Evidence Map:
+{evidence_map}
+
+You must return a valid JSON array of objects matching this exact structure:
+[
+  {{
+    "outcome": "The original claimed outcome text verbatim",
+    "status": "Met",
+    "evidence": "File path and line numbers or specific function blocks where the implementation resides",
+    "gap": "-"
+  }}
+]
+
+Status must be one of: "Met", "Partial", "Missing", or "Not Verifiable".
+For "Partial" or "Missing" outcomes, explain what requirements are missing or not detected in the "gap" field. If Met, set "gap" to "-".
+Return ONLY the raw JSON array. Do not add code blocks, markdown wrapper fences, backticks, or any conversational text.

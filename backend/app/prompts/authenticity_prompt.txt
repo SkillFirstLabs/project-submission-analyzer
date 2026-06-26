@@ -1,0 +1,16 @@
+Provide a detailed explanation of the project's authenticity classification and score based on the codebase evidence.
+
+Project Evidence Map:
+{evidence_map}
+
+Calculated Authenticity Metrics:
+- Overall Authenticity Score: {authenticity_score}%
+- Classification: {classification}
+- Breakdown of Category Scores:
+{category_scores}
+- Missing Components:
+{missing_components}
+- Scanned Evidence Indicators:
+{evidence_indicators}
+
+Write a comprehensive explanation explaining WHY the codebase received this authenticity score. Discuss the significance of the missing files or features, and why the implementation justifies the classification. Return only the raw explanation text. Do not add code blocks, markdown wrapper fences, backticks, or JSON.

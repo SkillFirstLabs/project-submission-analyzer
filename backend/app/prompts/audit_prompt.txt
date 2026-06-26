@@ -1,0 +1,22 @@
+Analyze this project to perform a detailed technical code quality, security, and maintainability audit.
+
+Project Evidence Map:
+{evidence_map}
+
+You must return a valid JSON object matching this exact structure:
+{{
+  "strengths": [
+    "Identified codebase strength 1",
+    "Identified codebase strength 2"
+  ],
+  "weaknesses": [
+    "Identified architectural weakness 1",
+    "Identified architectural weakness 2"
+  ],
+  "security": "Comprehensive summary of potential security issues, loose credentials, unprotected routes, or missing checks.",
+  "codeSmells": "Identified code smells (e.g. nested callbacks, large functions, duplicate structures).",
+  "technicalDebt": "Overview of technical debt, outdated packages, or parts needing immediate refactoring.",
+  "recommendations": "Detailed improvement and refactoring recommendations."
+}}
+
+Return ONLY the raw JSON object. Do not add code blocks, markdown wrapper fences, backticks, or any conversational text.

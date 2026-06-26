@@ -1,0 +1,10 @@
+Perform a deep architectural and structural review of the project.
+
+Dependencies Identified:
+{dependencies}
+
+Project Evidence Map:
+{evidence_map}
+
+You must write a comprehensive evaluation of the modularity, code organization, flow patterns, separation of concerns, and system architecture design. Write a clear overview text detailing how these parts interact. Keep it technical, constructive, and highly descriptive.
+Do not add code blocks or JSON formatting; return only the raw explanation text.

@@ -1,0 +1,22 @@
+Evaluate the candidate's answer for the following viva question.
+
+Question:
+{question}
+
+Expected Key Points:
+{expected_points}
+
+Candidate Answer:
+{candidate_answer}
+
+Return a valid JSON object matching this structure:
+{{
+  "grade": "Approve",
+  "points_met": [
+    "Expected point that was successfully addressed"
+  ],
+  "feedback": "Concise review of the depth and clarity of the candidate's technical response."
+}}
+
+"grade" must be one of: "Approve", "Partial", or "Fail".
+Return ONLY the raw JSON object. Do not add code blocks, markdown wrapper fences, backticks, or any conversational text.

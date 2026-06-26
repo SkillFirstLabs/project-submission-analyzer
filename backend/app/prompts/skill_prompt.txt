@@ -1,0 +1,19 @@
+Identify and detect matchable skills from the provided Skill Catalog that are present in the project Evidence Map.
+
+Skill Catalog:
+{skill_catalog}
+
+Project Evidence Map:
+{evidence_map}
+
+You must return a valid JSON array of objects representing the matches. Each object in the array must match this exact structure:
+[
+  {{
+    "skill_id": "sk-xxx",
+    "skill_name": "Skill Name from catalog",
+    "confidence": 0.95,
+    "rationale": "Detailed explanation of why this skill matches, referencing specific file evidence or configuration dependencies identified in the codebase."
+  }}
+]
+
+Return ONLY the raw JSON array. Do not add code blocks, markdown wrapper fences, backticks, or any conversational text.

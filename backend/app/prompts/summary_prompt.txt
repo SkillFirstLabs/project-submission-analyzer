@@ -1,0 +1,13 @@
+Compile a high-level executive summary of this project.
+
+Project Title:
+{title}
+
+Project Description:
+{description}
+
+Project Evidence Map:
+{evidence_map}
+
+Write a concise 2-3 sentence overview summarizing the project's complexity, technical alignment, and primary scope.
+Do not add code blocks or JSON formatting; return only the raw summary text.
