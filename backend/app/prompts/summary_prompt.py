@@ -6,10 +6,6 @@ Based on the codebase analysis, compile a narrative summary of the project, list
 SUMMARY_USER_PROMPT_TEMPLATE = """
 === PROJECT INFO ===
 Title: {project_title}
-Description: {project_description}
-
-=== OUTCOME EVALUATIONS ===
-{outcome_evals}
 
 === CODE CONTEXT ===
 {context}
@@ -17,11 +13,11 @@ Description: {project_description}
 === INSTRUCTIONS ===
 Generate the project summary report.
 Return a JSON object matching this structure:
-{
+{{
   "narrative": "A 2-3 sentence overview of the project and its state.",
   "strengths": ["Strength 1", "Strength 2"],
   "gaps": ["Gap 1", "Gap 2"],
   "alignment_score": 85.0
-}
+}}
 Return ONLY valid JSON.
 """

@@ -13,7 +13,6 @@ from app.services.vector_store import build_vector_store
 from app.services.retrieval_service import retrieve_context
 from app.services.skill_service import detect_skills
 from app.services.interview_service import generate_interview_questions
-from app.services.outcome_service import evaluate_outcomes
 from app.services.summary_service import generate_summary
 from app.services.report_service import build_report
 from app.services.cleanup_service import cleanup_project
@@ -32,23 +31,12 @@ def analyze_submission():
         return jsonify({"detail": "Empty filename."}), 400
         
     project_title = request.form.get("project_title")
-    project_description = request.form.get("project_description")
-    project_outcomes = request.form.get("project_outcomes")
     
     questions_per_skill_str = request.form.get("questions_per_skill", "5")
     try:
         questions_per_skill = int(questions_per_skill_str)
     except ValueError:
         questions_per_skill = 5
-        
-    parsed_outcomes = []
-    if project_outcomes:
-        try:
-            parsed_outcomes = json.loads(project_outcomes)
-            if not isinstance(parsed_outcomes, list):
-                parsed_outcomes = [project_outcomes]
-        except json.JSONDecodeError:
-            parsed_outcomes = [o.strip() for o in project_outcomes.split(",") if o.strip()]
             
     temp_zip = tempfile.NamedTemporaryFile(delete=False, suffix=".zip")
     try:
@@ -79,15 +67,15 @@ def analyze_submission():
             
         vector_store = build_vector_store(chunks)
         
-        context = retrieve_context(vector_store, RETRIEVAL_QUERIES, top_k=5)
+        context = retrieve_context(vector_store, RETRIEVAL_QUERIES, top_k=2)
         
         suggested_skills = detect_skills(context)
+        print(f"Suggested skills: {suggested_skills}", flush=True)
+        print(f"Context length: {len(context)} characters", flush=True)
         
         interview_data = generate_interview_questions(suggested_skills, context, questions_per_skill)
         
-        outcome_evals = evaluate_outcomes(parsed_outcomes, context)
-        
-        summary_data = generate_summary(project_title, project_description, outcome_evals, context)
+        summary_data = generate_summary(project_title, context)
         
         metadata = {
             "total_files": len(files),
@@ -107,6 +95,8 @@ def analyze_submission():
         return jsonify(report), 200
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"detail": f"Analysis failed: {str(e)}"}), 500
         
     finally:

@@ -1,37 +1,50 @@
+import re
 from typing import List, Dict, Any
 
 FRAMEWORKS = {
     "FastAPI": {
-        "identifiers": ["fastapi"],
-        "imports": ["fastapi", "APIRouter"],
+        "identifiers": [r'\bfastapi\b'],
+        "import_patterns": [r'\bimport\s+fastapi\b', r'\bfrom\s+fastapi\b'],
     },
     "Flask": {
-        "identifiers": ["flask", "flask-cors"],
-        "imports": ["flask", "Flask", "Blueprint"],
+        "identifiers": [r'\bflask\b'],
+        "import_patterns": [r'\bimport\s+flask\b', r'\bfrom\s+flask\b'],
     },
     "Django": {
-        "identifiers": ["django"],
-        "imports": ["django", "django.db", "django.urls"],
+        "identifiers": [r'\bdjango\b'],
+        "import_patterns": [r'\bimport\s+django\b', r'\bfrom\s+django\b'],
     },
     "React": {
-        "identifiers": ["react", "react-dom"],
-        "imports": ["react", "useState", "useEffect"],
+        "identifiers": [r'"react"\s*:', r'"react-dom"\s*:'],
+        "import_patterns": [
+            r'\bimport\s+React\b',
+            r'\bfrom\s+[\'"]react(-dom)?[\'"]',
+            r'\brequire\([\'"]react(-dom)?[\'"]\)'
+        ],
     },
     "Express": {
-        "identifiers": ["express"],
-        "imports": ["express", "require('express')"],
+        "identifiers": [r'"express"\s*:'],
+        "import_patterns": [
+            r'\bimport\s+express\b',
+            r'\bfrom\s+[\'"]express[\'"]',
+            r'\brequire\([\'"]express[\'"]\)'
+        ],
     },
     "Next.js": {
-        "identifiers": ["next"],
-        "imports": ["next/router", "next/link", "next/image"],
+        "identifiers": [r'"next"\s*:'],
+        "import_patterns": [r'\bfrom\s+[\'"]next/'],
     },
     "NestJS": {
-        "identifiers": ["@nestjs/core", "@nestjs/common"],
-        "imports": ["@nestjs/common", "@nestjs/core"],
+        "identifiers": [r'"@nestjs/core"\s*:', r'"@nestjs/common"\s*:'],
+        "import_patterns": [r'\bfrom\s+[\'"]@nestjs/'],
     },
     "Spring Boot": {
-        "identifiers": ["spring-boot-starter"],
-        "imports": ["org.springframework.boot", "SpringBootApplication"],
+        "identifiers": [r'\bspring-boot-starter\b'],
+        "import_patterns": [r'\bimport\s+org\.springframework\.boot\b'],
+    },
+    "Flutter": {
+        "identifiers": [r'\bflutter\b', r'sdk:\s*flutter'],
+        "import_patterns": [r'\bpackage:flutter/'],
     }
 }
 
@@ -40,6 +53,7 @@ def detect_frameworks(files: List[Dict[str, Any]], parsed_structures: List[Dict[
     
     package_json = ""
     requirements_txt = ""
+    pubspec_yaml = ""
     pom_xml = ""
     
     all_imports = []
@@ -49,33 +63,45 @@ def detect_frameworks(files: List[Dict[str, Any]], parsed_structures: List[Dict[
     for f in files:
         name = f.get("filename", "").lower()
         if name == "package.json":
-            package_json = f.get("content", "").lower()
+            package_json = f.get("content", "")
         elif name == "requirements.txt":
-            requirements_txt = f.get("content", "").lower()
+            requirements_txt = f.get("content", "")
+        elif name == "pubspec.yaml":
+            pubspec_yaml = f.get("content", "")
         elif name == "pom.xml":
-            pom_xml = f.get("content", "").lower()
+            pom_xml = f.get("content", "")
             
     for fw, rule in FRAMEWORKS.items():
         confidence = 0.0
         evidence = []
         
-        for identifier in rule["identifiers"]:
-            if identifier in package_json:
+        # Check config/manifest files using regex
+        for pattern in rule["identifiers"]:
+            # Check package.json
+            if package_json and re.search(pattern, package_json, re.IGNORECASE):
                 confidence = max(confidence, 0.9)
-                evidence.append(f"Found '{identifier}' in package.json")
-            if identifier in requirements_txt:
+                evidence.append(f"Found match for '{pattern}' in package.json")
+            # Check requirements.txt
+            if requirements_txt and re.search(pattern, requirements_txt, re.IGNORECASE):
                 confidence = max(confidence, 0.9)
-                evidence.append(f"Found '{identifier}' in requirements.txt")
-            if identifier in pom_xml:
+                evidence.append(f"Found match for '{pattern}' in requirements.txt")
+            # Check pubspec.yaml
+            if pubspec_yaml and re.search(pattern, pubspec_yaml, re.IGNORECASE):
                 confidence = max(confidence, 0.9)
-                evidence.append(f"Found '{identifier}' in pom.xml")
+                evidence.append(f"Found match for '{pattern}' in pubspec.yaml")
+            # Check pom.xml
+            if pom_xml and re.search(pattern, pom_xml, re.IGNORECASE):
+                confidence = max(confidence, 0.9)
+                evidence.append(f"Found match for '{pattern}' in pom.xml")
                 
+        # Check imports using regex
         imports_found = 0
         for imp in all_imports:
-            for rule_imp in rule["imports"]:
-                if rule_imp.lower() in imp.lower():
+            for pattern in rule["import_patterns"]:
+                if re.search(pattern, imp):
                     imports_found += 1
-                    evidence.append(f"Found import '{rule_imp}' in code")
+                    evidence.append(f"Found matching import pattern '{pattern}' in code")
+                    break  # Found a match for this import line, move to next import
                     
         if imports_found > 0:
             import_conf = min(0.3 + (imports_found * 0.2), 0.95)

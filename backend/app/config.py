@@ -6,6 +6,7 @@ load_dotenv()
 class Settings:
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
+    COHERE_API_KEY: str = os.getenv("COHERE_API_KEY", "")
     
     # FAISS config
     FAISS_INDEX_PATH: str = "faiss_index"
@@ -36,7 +37,7 @@ class Settings:
     ALWAYS_INCLUDE_NAMES: set = {
         "dockerfile", "docker-compose.yml", "docker-compose.yaml", "makefile",
         "readme", "requirements.txt", "package.json", "pom.xml", "build.gradle",
-        "go.mod", "cargo.toml", ".gitignore",
+        "go.mod", "cargo.toml", ".gitignore", "pubspec.yaml",
     }
     
     SKIP_DIRS: set = {

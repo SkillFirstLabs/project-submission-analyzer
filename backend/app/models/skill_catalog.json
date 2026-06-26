@@ -35,6 +35,21 @@
     "description": "Building server-rendered React applications using Next.js."
   },
   {
+    "skill_name": "Flutter",
+    "category": "Mobile Framework",
+    "description": "Building cross-platform mobile applications using Flutter and Dart."
+  },
+  {
+    "skill_name": "Firebase",
+    "category": "Cloud/Database",
+    "description": "Integrating Firebase Authentication, Firestore, Realtime Database, or Cloud Functions."
+  },
+  {
+    "skill_name": "SQLite",
+    "category": "Database",
+    "description": "Using SQLite for local database storage and mobile apps."
+  },
+  {
     "skill_name": "JWT Authentication",
     "category": "Security",
     "description": "Implementing JSON Web Token based user authentication and authorization."

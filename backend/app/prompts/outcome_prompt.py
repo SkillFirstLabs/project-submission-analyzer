@@ -19,11 +19,11 @@ OUTCOME_USER_PROMPT_TEMPLATE = """
 Evaluate the implementation status of each target outcome.
 Return a JSON array of outcome evaluations:
 [
-  {
+  {{
     "outcome": "Target outcome text",
     "status": "met | partial | not_met | not_verifiable",
     "evidence": "File X implements this by doing Y"
-  }
+  }}
 ]
 Return ONLY valid JSON.
 """

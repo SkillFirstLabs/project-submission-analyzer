@@ -5,18 +5,14 @@ from app.prompts.summary_prompt import SUMMARY_SYSTEM_INSTRUCTION, SUMMARY_USER_
 
 logger = logging.getLogger("project_analyzer")
 
-def generate_summary(project_title: str, project_description: str, outcome_evals: list, context: str) -> dict:
+def generate_summary(project_title: str, context: str) -> dict:
     """
     Generates summary, strengths, gaps, and alignment score.
     """
     title = project_title or "Unknown Project"
-    desc = project_description or "No description provided."
-    outcome_str = json.dumps(outcome_evals, indent=2)
     
     prompt = SUMMARY_USER_PROMPT_TEMPLATE.format(
         project_title=title,
-        project_description=desc,
-        outcome_evals=outcome_str,
         context=context
     )
     

@@ -2,38 +2,41 @@ import os
 import json
 import re
 import logging
-from openai import OpenAI
+import requests
 
 logger = logging.getLogger("project_analyzer")
 
 def get_llm_client():
-    """Returns an OpenAI client configured for NVIDIA API."""
-    api_key = os.getenv("NVIDIA_API_KEY", "")
-    return OpenAI(
-        base_url="https://integrate.api.nvidia.com/v1",
-        api_key=api_key,
-    )
+    """Unused now that we use Cohere API directly."""
+    return None
 
 def llm_generate(system_instruction: str, user_prompt: str, temperature: float = 0.2) -> str:
     """
-    Generates content using the NVIDIA-hosted DeepSeek model.
+    Generates content using the Cohere command-r-08-2024 model.
     Returns the raw text response.
     """
-    client = get_llm_client()
-    
-    completion = client.chat.completions.create(
-        model="deepseek-ai/deepseek-v4-flash",
-        messages=[
+    api_key = os.getenv("COHERE_API_KEY", "")
+    url = "https://api.cohere.com/v2/chat"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": "command-r-08-2024",
+        "messages": [
             {"role": "system", "content": system_instruction},
-            {"role": "user", "content": user_prompt},
+            {"role": "user", "content": user_prompt}
         ],
-        temperature=temperature,
-        top_p=0.95,
-        max_tokens=16384,
-        stream=False,
-    )
+        "temperature": temperature
+    }
     
-    return completion.choices[0].message.content
+    response = requests.post(url, headers=headers, json=payload, timeout=180)
+    response.raise_for_status()
+    data = response.json()
+    
+    content_list = data["message"]["content"]
+    text = "".join(item["text"] for item in content_list if item.get("type") == "text")
+    return text
 
 def parse_json_response(raw_text: str):
     """
