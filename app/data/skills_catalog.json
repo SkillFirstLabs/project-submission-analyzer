@@ -1,0 +1,251 @@
+[
+  { "skill_id": "sk-001", "skill_name": "Python", "category": "Programming Language",
+    "keywords": ["def ", "import ", "class ", "lambda", "list comprehension", "dict", "tuple", "asyncio", "pip", "virtualenv"],
+    "frameworks": ["FastAPI", "Flask", "Django"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-002", "skill_name": "Java", "category": "Programming Language",
+    "keywords": ["public class", "import java", "System.out", "void ", "interface ", "extends ", "implements ", "@Override"],
+    "frameworks": ["Spring Boot"],
+    "file_extensions": [".java"] },
+
+  { "skill_id": "sk-003", "skill_name": "JavaScript", "category": "Programming Language",
+    "keywords": ["const ", "let ", "var ", "function", "==>", "async ", "await ", "Promise", "require(", "module.exports"],
+    "frameworks": ["React", "Express.js", "Node.js", "Vue.js", "Next.js"],
+    "file_extensions": [".js", ".jsx", ".mjs"] },
+
+  { "skill_id": "sk-004", "skill_name": "TypeScript", "category": "Programming Language",
+    "keywords": ["interface ", "type ", ": string", ": number", ": boolean", "as ", "readonly ", "enum ", "namespace"],
+    "frameworks": ["React", "Angular", "NestJS"],
+    "file_extensions": [".ts", ".tsx"] },
+
+  { "skill_id": "sk-005", "skill_name": "C++", "category": "Programming Language",
+    "keywords": ["#include", "std::", "cout", "cin", "namespace", "template<", "vector<", "nullptr"],
+    "frameworks": [],
+    "file_extensions": [".cpp", ".cc", ".h", ".hpp"] },
+
+  { "skill_id": "sk-006", "skill_name": "C#", "category": "Programming Language",
+    "keywords": ["using System", "namespace ", "public class", "Console.Write", "var ", "async Task", "await "],
+    "frameworks": [],
+    "file_extensions": [".cs"] },
+
+  { "skill_id": "sk-007", "skill_name": "Go", "category": "Programming Language",
+    "keywords": ["package main", "import (", "func ", "goroutine", "channel", "go func", ":=", "defer "],
+    "frameworks": [],
+    "file_extensions": [".go"] },
+
+  { "skill_id": "sk-008", "skill_name": "Kotlin", "category": "Programming Language",
+    "keywords": ["fun ", "val ", "var ", "data class", "companion object", "coroutine", "suspend fun", "kotlin"],
+    "frameworks": [],
+    "file_extensions": [".kt", ".kts"] },
+
+  { "skill_id": "sk-009", "skill_name": "React", "category": "Frontend",
+    "keywords": ["useState", "useEffect", "useContext", "JSX", "props", "ReactDOM", "Component", "useReducer", "useRef"],
+    "frameworks": ["React", "Next.js"],
+    "file_extensions": [".jsx", ".tsx", ".js", ".ts"] },
+
+  { "skill_id": "sk-010", "skill_name": "Angular", "category": "Frontend",
+    "keywords": ["@Component", "@NgModule", "@Injectable", "ngOnInit", "RouterModule", "HttpClient", "Observable"],
+    "frameworks": ["Angular"],
+    "file_extensions": [".ts", ".html"] },
+
+  { "skill_id": "sk-011", "skill_name": "Vue.js", "category": "Frontend",
+    "keywords": ["Vue.component", "v-bind", "v-model", "v-for", "v-if", "mounted()", "computed:", "vuex", "router"],
+    "frameworks": ["Vue.js"],
+    "file_extensions": [".vue", ".js"] },
+
+  { "skill_id": "sk-012", "skill_name": "Next.js", "category": "Frontend",
+    "keywords": ["getServerSideProps", "getStaticProps", "useRouter", "next/link", "next/image", "pages/", "_app.js"],
+    "frameworks": ["Next.js"],
+    "file_extensions": [".jsx", ".tsx", ".js", ".ts"] },
+
+  { "skill_id": "sk-013", "skill_name": "HTML/CSS", "category": "Frontend",
+    "keywords": ["<!DOCTYPE", "<html", "<div", "<style", "class=", "id=", "margin:", "padding:", "flex", "grid"],
+    "frameworks": [],
+    "file_extensions": [".html", ".css"] },
+
+  { "skill_id": "sk-014", "skill_name": "Tailwind CSS", "category": "Frontend",
+    "keywords": ["tailwind", "className=\"flex", "className=\"grid", "className=\"text-", "className=\"bg-", "tailwind.config"],
+    "frameworks": [],
+    "file_extensions": [".html", ".jsx", ".tsx", ".vue"] },
+
+  { "skill_id": "sk-015", "skill_name": "Responsive Web Design", "category": "Frontend",
+    "keywords": ["@media", "viewport", "max-width", "min-width", "flex-wrap", "grid-template", "breakpoint"],
+    "frameworks": [],
+    "file_extensions": [".css", ".scss", ".html"] },
+
+  { "skill_id": "sk-016", "skill_name": "Node.js", "category": "Backend",
+    "keywords": ["require(", "module.exports", "app.listen", "process.env", "__dirname", "fs.readFile", "path.join"],
+    "frameworks": ["Express.js", "Fastify", "NestJS"],
+    "file_extensions": [".js", ".ts", ".mjs"] },
+
+  { "skill_id": "sk-017", "skill_name": "Express.js", "category": "Backend",
+    "keywords": ["express()", "app.get(", "app.post(", "router.get(", "res.json(", "req.body", "middleware", "app.use("],
+    "frameworks": ["Express.js"],
+    "file_extensions": [".js", ".ts"] },
+
+  { "skill_id": "sk-018", "skill_name": "FastAPI", "category": "Backend",
+    "keywords": ["from fastapi", "FastAPI()", "APIRouter", "HTTPException", "@app.get", "@app.post", "@router", "Depends("],
+    "frameworks": ["FastAPI"],
+    "file_extensions": [".py"] },
+
+  { "skill_id": "sk-019", "skill_name": "Django", "category": "Backend",
+    "keywords": ["from django", "django.db", "models.Model", "urlpatterns", "views.py", "settings.py", "makemigrations"],
+    "frameworks": ["Django"],
+    "file_extensions": [".py"] },
+
+  { "skill_id": "sk-020", "skill_name": "Flask", "category": "Backend",
+    "keywords": ["from flask", "Flask(__name__)", "@app.route", "render_template", "jsonify", "request.json"],
+    "frameworks": ["Flask"],
+    "file_extensions": [".py"] },
+
+  { "skill_id": "sk-021", "skill_name": "Spring Boot", "category": "Backend",
+    "keywords": ["@SpringBootApplication", "@RestController", "@RequestMapping", "@Autowired", "@Service", "@Repository"],
+    "frameworks": ["Spring Boot"],
+    "file_extensions": [".java"] },
+
+  { "skill_id": "sk-022", "skill_name": "REST API Design", "category": "Backend",
+    "keywords": ["GET", "POST", "PUT", "DELETE", "PATCH", "status_code", "response_model", "endpoint", "route", "HTTP"],
+    "frameworks": ["FastAPI", "Flask", "Django", "Express.js"],
+    "file_extensions": [".py", ".js", ".ts", ".java"] },
+
+  { "skill_id": "sk-023", "skill_name": "GraphQL", "category": "Backend",
+    "keywords": ["graphql", "Query", "Mutation", "Schema", "resolver", "typeDefs", "gql`", "useQuery", "useMutation"],
+    "frameworks": [],
+    "file_extensions": [".graphql", ".gql", ".js", ".ts", ".py"] },
+
+  { "skill_id": "sk-024", "skill_name": "PostgreSQL", "category": "Database",
+    "keywords": ["postgresql", "psycopg2", "pg.connect", "CREATE TABLE", "psql", "pg_dump", "SERIAL", "FOREIGN KEY"],
+    "frameworks": ["SQLAlchemy"],
+    "file_extensions": [".py", ".sql", ".js"] },
+
+  { "skill_id": "sk-025", "skill_name": "MySQL", "category": "Database",
+    "keywords": ["mysql", "mysql.connector", "pymysql", "CREATE TABLE", "AUTO_INCREMENT", "INNER JOIN", "INDEX"],
+    "frameworks": [],
+    "file_extensions": [".py", ".sql", ".js"] },
+
+  { "skill_id": "sk-026", "skill_name": "MongoDB", "category": "Database",
+    "keywords": ["mongodb", "pymongo", "MongoClient", "find(", "insertOne", "aggregate", "ObjectId", "mongoose"],
+    "frameworks": ["PyMongo"],
+    "file_extensions": [".py", ".js", ".ts"] },
+
+  { "skill_id": "sk-027", "skill_name": "Redis", "category": "Database",
+    "keywords": ["redis", "redis.Redis", "r.set(", "r.get(", "cache", "EXPIRE", "pubsub", "aioredis"],
+    "frameworks": [],
+    "file_extensions": [".py", ".js"] },
+
+  { "skill_id": "sk-028", "skill_name": "SQLite", "category": "Database",
+    "keywords": ["sqlite3", "sqlite", "db.sqlite", ":memory:", "cursor.execute", "conn.commit"],
+    "frameworks": [],
+    "file_extensions": [".py", ".sql", ".db"] },
+
+  { "skill_id": "sk-029", "skill_name": "SQL", "category": "Database",
+    "keywords": ["SELECT", "INSERT INTO", "UPDATE", "DELETE FROM", "CREATE TABLE", "JOIN", "WHERE", "GROUP BY", "ORDER BY"],
+    "frameworks": ["SQLAlchemy"],
+    "file_extensions": [".sql", ".py", ".js"] },
+
+  { "skill_id": "sk-030", "skill_name": "AWS", "category": "Cloud",
+    "keywords": ["boto3", "aws_access_key", "s3.upload", "ec2", "lambda_handler", "CloudFormation", "IAM", "ECS"],
+    "frameworks": [],
+    "file_extensions": [".py", ".js", ".yml", ".yaml", ".tf"] },
+
+  { "skill_id": "sk-031", "skill_name": "Microsoft Azure", "category": "Cloud",
+    "keywords": ["azure", "AzureClient", "BlobServiceClient", "azure.storage", "azure.functions", "az "],
+    "frameworks": [],
+    "file_extensions": [".py", ".js", ".yml", ".bicep"] },
+
+  { "skill_id": "sk-032", "skill_name": "Google Cloud Platform", "category": "Cloud",
+    "keywords": ["google.cloud", "from google.cloud", "BigQuery", "Firestore", "gcloud", "GCS", "pubsub_v1"],
+    "frameworks": [],
+    "file_extensions": [".py", ".js", ".yaml"] },
+
+  { "skill_id": "sk-033", "skill_name": "Firebase", "category": "Cloud",
+    "keywords": ["firebase", "initializeApp", "firestore()", "auth()", "onSnapshot", "getFirestore", "firebase/app"],
+    "frameworks": [],
+    "file_extensions": [".js", ".ts", ".py"] },
+
+  { "skill_id": "sk-034", "skill_name": "Docker", "category": "DevOps",
+    "keywords": ["FROM ", "RUN ", "COPY ", "EXPOSE ", "CMD ", "ENTRYPOINT", "docker-compose", "services:", "image:"],
+    "frameworks": [],
+    "file_extensions": [".dockerfile", ".yml", ".yaml"] },
+
+  { "skill_id": "sk-035", "skill_name": "Kubernetes", "category": "DevOps",
+    "keywords": ["apiVersion:", "kind: Pod", "kind: Deployment", "kubectl", "namespace:", "replicas:", "containerPort:"],
+    "frameworks": [],
+    "file_extensions": [".yaml", ".yml"] },
+
+  { "skill_id": "sk-036", "skill_name": "CI/CD", "category": "DevOps",
+    "keywords": ["github-actions", "on: push", "jobs:", "steps:", "pipeline", "stage:", "Jenkinsfile", ".gitlab-ci"],
+    "frameworks": [],
+    "file_extensions": [".yml", ".yaml"] },
+
+  { "skill_id": "sk-037", "skill_name": "Git", "category": "DevOps",
+    "keywords": [".gitignore", "README", "CONTRIBUTING", ".github", "git init", "git commit", "branches"],
+    "frameworks": [],
+    "file_extensions": [".md", ".txt", ".gitignore"] },
+
+  { "skill_id": "sk-038", "skill_name": "Linux", "category": "DevOps",
+    "keywords": ["#!/bin/bash", "#!/usr/bin/env", "chmod", "chown", "systemd", "crontab", "grep ", "awk ", "sed "],
+    "frameworks": [],
+    "file_extensions": [".sh", ".bash"] },
+
+  { "skill_id": "sk-039", "skill_name": "Terraform", "category": "DevOps",
+    "keywords": ["terraform", "resource \"", "provider \"", "variable \"", "output \"", "module \"", ".tfstate"],
+    "frameworks": [],
+    "file_extensions": [".tf", ".tfvars"] },
+
+  { "skill_id": "sk-040", "skill_name": "Nginx", "category": "DevOps",
+    "keywords": ["nginx", "server_name", "proxy_pass", "listen 80", "location /", "upstream ", "ssl_certificate"],
+    "frameworks": [],
+    "file_extensions": [".conf", ".nginx"] },
+
+  { "skill_id": "sk-041", "skill_name": "Machine Learning", "category": "Data & AI",
+    "keywords": ["fit(", "predict(", "train_test_split", "accuracy_score", "classification_report", "Pipeline", "GridSearchCV", "cross_val_score"],
+    "frameworks": ["scikit-learn", "TensorFlow", "PyTorch", "XGBoost"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-042", "skill_name": "Data Analysis", "category": "Data & AI",
+    "keywords": ["read_csv", "groupby", "merge", "pivot_table", "describe()", "value_counts", "fillna", "dropna", "corr()"],
+    "frameworks": ["Pandas"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-043", "skill_name": "Pandas", "category": "Data & AI",
+    "keywords": ["import pandas", "pd.DataFrame", "pd.read_csv", "pd.read_json", "df.groupby", "df.merge", "df.iloc", "df.loc"],
+    "frameworks": ["Pandas"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-044", "skill_name": "NumPy", "category": "Data & AI",
+    "keywords": ["import numpy", "np.array", "np.zeros", "np.ones", "np.reshape", "np.dot", "np.mean", "np.std", "ndarray"],
+    "frameworks": ["NumPy"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-045", "skill_name": "TensorFlow", "category": "Data & AI",
+    "keywords": ["import tensorflow", "tf.keras", "tf.data", "model.compile", "model.fit", "Dense(", "Conv2D(", "LSTM("],
+    "frameworks": ["TensorFlow"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-046", "skill_name": "PyTorch", "category": "Data & AI",
+    "keywords": ["import torch", "torch.nn", "nn.Module", "forward(", "optimizer.step", "loss.backward", "DataLoader"],
+    "frameworks": ["PyTorch"],
+    "file_extensions": [".py", ".ipynb"] },
+
+  { "skill_id": "sk-047", "skill_name": "React Native", "category": "Mobile",
+    "keywords": ["react-native", "StyleSheet.create", "View ", "Text ", "TouchableOpacity", "FlatList", "Navigator"],
+    "frameworks": [],
+    "file_extensions": [".jsx", ".tsx", ".js"] },
+
+  { "skill_id": "sk-048", "skill_name": "Flutter", "category": "Mobile",
+    "keywords": ["flutter", "Widget", "StatefulWidget", "StatelessWidget", "BuildContext", "Scaffold", "pubspec.yaml"],
+    "frameworks": [],
+    "file_extensions": [".dart"] },
+
+  { "skill_id": "sk-049", "skill_name": "Android Development", "category": "Mobile",
+    "keywords": ["android", "Activity", "Fragment", "Intent", "RecyclerView", "ViewModel", "LiveData", "Manifest"],
+    "frameworks": [],
+    "file_extensions": [".java", ".kt", ".xml"] },
+
+  { "skill_id": "sk-050", "skill_name": "Cybersecurity", "category": "Security",
+    "keywords": ["encryption", "hashing", "bcrypt", "jwt", "oauth", "ssl", "tls", "csrf", "xss", "sqlinjection", "penetration"],
+    "frameworks": [],
+    "file_extensions": [".py", ".js", ".ts"] }
+]

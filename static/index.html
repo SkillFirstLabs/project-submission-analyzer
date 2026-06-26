@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Submission Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0a0a0f; --bg2:#111118; --bg3:#16161f; --border:#ffffff12; --border2:#ffffff20;
+      --accent:#6c63ff; --accent2:#a78bfa; --accent3:#38bdf8;
+      --green:#34d399; --red:#f87171; --yellow:#fbbf24;
+      --text:#f1f5f9; --text2:#94a3b8; --text3:#64748b; --card:#13131c;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:var(--bg2)} ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+    #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+    .app{position:relative;z-index:1}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;background:#0a0a0fcc;backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+    .nav-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+    .nav-links{display:flex;gap:1.5rem;align-items:center}
+    .nav-links a{color:var(--text2);text-decoration:none;font-size:.88rem;transition:color .2s}
+    .nav-links a:hover{color:var(--text)}
+    .nav-badge{font-size:.72rem;background:var(--accent);color:#fff;padding:2px 10px;border-radius:20px;font-weight:600}
+
+    /* LLM TOGGLE in nav */
+    .llm-toggle-wrap{display:flex;align-items:center;gap:.6rem;background:var(--bg3);border:1px solid var(--border2);border-radius:30px;padding:4px 6px}
+    .llm-toggle-label{font-size:.75rem;font-weight:600;color:var(--text3);padding:0 4px}
+    .toggle-pill{display:flex;background:var(--bg2);border-radius:20px;padding:2px;gap:2px}
+    .toggle-opt{padding:4px 12px;border-radius:16px;font-size:.76rem;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:all .2s;white-space:nowrap}
+    .toggle-opt.active-gemini{background:linear-gradient(135deg,#6c63ff,#8b5cf6);color:#fff;box-shadow:0 0 12px #6c63ff50}
+    .toggle-opt.active-local{background:linear-gradient(135deg,#38bdf8,#06b6d4);color:#fff;box-shadow:0 0 12px #38bdf850}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 2rem 4rem;text-align:center}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:#6c63ff15;border:1px solid #6c63ff40;color:var(--accent2);font-size:.8rem;font-weight:500;padding:4px 14px;border-radius:20px;margin-bottom:1.5rem;letter-spacing:.05em}
+    .hero h1{font-size:clamp(2.2rem,6vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:1.2rem;background:linear-gradient(135deg,#fff 0%,var(--accent2) 50%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:1.05rem;color:var(--text2);max-width:560px;line-height:1.7;margin-bottom:2rem}
+    .hero-cta{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border:none;padding:.85rem 2rem;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 0 30px #6c63ff40}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 50px #6c63ff60}
+    .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);padding:.85rem 2rem;border-radius:12px;font-size:1rem;cursor:pointer;transition:all .2s;font-weight:500}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+    .stats-bar{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;padding:1.5rem 2rem;background:var(--card);border:1px solid var(--border);border-radius:16px;max-width:700px;width:100%}
+    .stat{text-align:center} .stat-val{font-size:1.6rem;font-weight:800;color:var(--accent2)} .stat-label{font-size:.72rem;color:var(--text3);margin-top:2px}
+
+    /* SECTION */
+    section{padding:5rem 2rem;max-width:1100px;margin:0 auto}
+    .section-tag{color:var(--accent2);font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem}
+    .section-title{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:1rem}
+    .section-sub{color:var(--text2);line-height:1.7;max-width:560px}
+
+    /* PIPELINE */
+    .pipeline{display:flex;gap:0;overflow-x:auto;padding-bottom:1rem;margin-top:3rem}
+    .pipeline-step{flex:0 0 150px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 .75rem}
+    .pipeline-step:not(:last-child)::after{content:'';position:absolute;top:28px;right:-14px;width:28px;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+    .step-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#6c63ff22,#6c63ff44);border:1px solid #6c63ff55;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:.75rem}
+    .step-label{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+    .step-desc{font-size:.7rem;color:var(--text3);line-height:1.4}
+
+    /* FEATURES */
+    .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem}
+    .feature-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:border-color .3s,transform .3s}
+    .feature-card:hover{border-color:#6c63ff55;transform:translateY(-4px)}
+    .feature-icon{font-size:1.8rem;margin-bottom:1rem}
+    .feature-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+    .feature-desc{font-size:.84rem;color:var(--text2);line-height:1.6}
+
+    /* ANALYZER */
+    #analyzer{max-width:900px;margin:0 auto;padding:5rem 2rem;scroll-margin-top:80px}
+    .llm-provider-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:var(--bg3);border:1px solid var(--border2);border-radius:14px;padding:1rem 1.5rem;margin-bottom:1.5rem}
+    .llm-provider-info{display:flex;flex-direction:column;gap:.2rem}
+    .llm-provider-title{font-weight:700;font-size:.95rem}
+    .llm-provider-desc{font-size:.8rem;color:var(--text3)}
+    .llm-big-toggle{display:flex;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:3px;gap:3px}
+    .llm-big-opt{padding:.5rem 1.4rem;border-radius:9px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;background:transparent;color:var(--text3);transition:all .25s;display:flex;align-items:center;gap:.4rem}
+    .llm-big-opt.sel-gemini{background:linear-gradient(135deg,#6c63ff,#8b5cf6);color:#fff;box-shadow:0 2px 12px #6c63ff40}
+    .llm-big-opt.sel-local{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#fff;box-shadow:0 2px 12px #38bdf840}
+    .llm-status-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+    .llm-status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .llm-status-dot.offline{background:var(--red)}
+
+    .form-card{background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden}
+    .form-header{padding:2rem 2.5rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#6c63ff08,#38bdf808)}
+    .form-header h2{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+    .form-header p{color:var(--text2);font-size:.88rem}
+    .form-body{padding:2.5rem;display:flex;flex-direction:column;gap:1.5rem}
+    label{font-size:.84rem;font-weight:600;color:var(--text2);display:block;margin-bottom:.5rem}
+    label span.req{color:var(--red);margin-left:2px}
+    input[type="text"],textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:.9rem;padding:.75rem 1rem;transition:border-color .2s,box-shadow .2s;outline:none}
+    input[type="text"]:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #6c63ff20}
+    input[type="text"]::placeholder,textarea::placeholder{color:var(--text3)}
+    textarea{resize:vertical;min-height:90px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    @media(max-width:640px){.form-row{grid-template-columns:1fr}}
+
+    /* QUICK FILL */
+    .quick-fill-bar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:1.25rem;padding:.75rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px}
+    .quick-fill-label{font-size:.76rem;color:var(--text3);font-weight:600;white-space:nowrap}
+    .qf-btn{font-size:.75rem;padding:.3rem .85rem;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .2s;font-weight:500}
+    .qf-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+    /* DROP ZONE */
+    .drop-zone{border:2px dashed var(--border2);border-radius:14px;padding:2rem;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg2);position:relative}
+    .drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:#6c63ff08}
+    .drop-zone.has-file{border-color:var(--green);background:#34d39908;border-style:solid}
+    .drop-icon{font-size:2rem;margin-bottom:.5rem}
+    .drop-title{font-weight:600;margin-bottom:.25rem;font-size:.95rem}
+    .drop-sub{font-size:.78rem;color:var(--text3)}
+    .drop-file-name{display:none;font-size:.85rem;color:var(--green);font-weight:600;margin-top:.4rem;font-family:'JetBrains Mono',monospace}
+    .drop-zone.has-file .drop-file-name{display:block}
+    .drop-zone.has-file .drop-default{display:none}
+    #fileInput{display:none}
+
+    /* SLIDER */
+    .slider-wrap{display:flex;align-items:center;gap:1rem}
+    input[type="range"]{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) var(--val,30%),var(--bg3) var(--val,30%));outline:none;cursor:pointer}
+    input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px #6c63ff80}
+    .slider-val{min-width:32px;text-align:center;font-weight:700;color:var(--accent2);font-size:1.1rem}
+
+    .form-footer{padding:0 2.5rem 2.5rem}
+    .submit-btn{width:100%;padding:1rem;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s,opacity .2s;box-shadow:0 4px 30px #6c63ff40;position:relative}
+    .submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 40px #6c63ff60}
+    .submit-btn:disabled{opacity:.6;cursor:not-allowed}
+    .submit-btn .btn-spinner{display:none;width:18px;height:18px;border:2px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+    .submit-btn.loading .btn-text{display:none}
+    .submit-btn.loading .btn-spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+  <style>
+    /* PROGRESS */
+    #progressSection{display:none;max-width:900px;margin:0 auto;padding:0 2rem 3rem}
+    .progress-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2rem;animation:fadeIn .4s ease}
+    .progress-title{font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem}
+    .progress-spinner{width:20px;height:20px;border:2px solid #ffffff20;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+    .steps-list{display:flex;flex-direction:column;gap:.6rem}
+    .progress-step{display:flex;align-items:center;gap:1rem;padding:.7rem 1rem;border-radius:10px;background:var(--bg2);border:1px solid var(--border);transition:all .3s}
+    .progress-step.active{border-color:#6c63ff55;background:#6c63ff08}
+    .progress-step.done{border-color:#34d39955;background:#34d39908}
+    .progress-step.error{border-color:#f8717155;background:#f8717108}
+    .step-status{font-size:.95rem;min-width:20px;text-align:center}
+    .step-name{font-size:.86rem;font-weight:500;flex:1}
+    .step-time{font-size:.74rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+
+    /* RESULTS */
+    #resultsSection{display:none;max-width:900px;margin:0 auto;padding:0 2rem 6rem}
+    .results-header{background:linear-gradient(135deg,#6c63ff15,#38bdf808);border:1px solid var(--border);border-radius:20px;padding:2rem;margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;animation:fadeIn .4s ease}
+    .results-title{font-size:1.4rem;font-weight:800;margin-bottom:.25rem}
+    .results-meta{font-size:.8rem;color:var(--text2);display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+    .provider-chip{font-size:.72rem;padding:2px 8px;border-radius:6px;font-weight:700}
+    .provider-chip.gemini{background:#6c63ff20;color:var(--accent2);border:1px solid #6c63ff30}
+    .provider-chip.local{background:#38bdf820;color:var(--accent3);border:1px solid #38bdf830}
+    .results-actions{display:flex;gap:.75rem}
+    .btn-sm{padding:.45rem 1rem;font-size:.8rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .2s;font-weight:500}
+    .btn-sm:hover{border-color:var(--accent);color:var(--text)}
+    .btn-sm.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+    /* TABS */
+    .tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .tab{padding:.5rem 1.1rem;border-radius:8px;font-size:.83rem;font-weight:600;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
+    .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .tab:hover:not(.active){border-color:var(--border2);color:var(--text)}
+    .tab-badge{display:inline-block;background:#ffffff20;border-radius:10px;padding:0 6px;font-size:.7rem;margin-left:3px}
+    .tab.active .tab-badge{background:#ffffff30}
+    .tab-content{display:none} .tab-content.active{display:block}
+
+    /* BANNERS */
+    .security-banner{display:flex;align-items:center;gap:1rem;padding:.9rem 1.4rem;border-radius:12px;margin-bottom:1.25rem;font-size:.86rem;font-weight:500}
+    .security-banner.ok{background:#34d39915;border:1px solid #34d39940;color:var(--green)}
+    .security-banner.warn{background:#fbbf2415;border:1px solid #fbbf2440;color:var(--yellow)}
+    .security-banner.danger{background:#f8717115;border:1px solid #f8717140;color:var(--red)}
+    .analysis-note{background:#6c63ff15;border:1px solid #6c63ff40;border-radius:12px;padding:.9rem 1.2rem;font-size:.86rem;color:var(--accent2);margin-bottom:1.25rem;display:flex;gap:.75rem;line-height:1.6}
+
+    /* SKILLS */
+    .skills-grid{display:flex;flex-direction:column;gap:1.1rem}
+    .skill-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+    .skill-card:hover{border-color:var(--border2)}
+    .skill-header{padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.9rem;cursor:pointer;user-select:none}
+    .skill-cat-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:5px;background:#6c63ff20;color:var(--accent2);border:1px solid #6c63ff30;white-space:nowrap}
+    .skill-name{font-weight:700;font-size:.95rem;flex:1}
+    .skill-id{font-size:.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+    .conf-wrap{flex:0 0 110px}
+    .conf-label{font-size:.68rem;color:var(--text3);margin-bottom:3px;display:flex;justify-content:space-between}
+    .conf-bar{height:5px;border-radius:3px;background:var(--bg3);overflow:hidden}
+    .conf-fill{height:100%;border-radius:3px;transition:width .5s}
+    .low-badge{font-size:.68rem;background:#fbbf2420;border:1px solid #fbbf2440;color:var(--yellow);padding:2px 7px;border-radius:5px;font-weight:600}
+    .skill-toggle{color:var(--text3);font-size:.8rem;transition:transform .2s}
+    .skill-card.open .skill-toggle{transform:rotate(180deg)}
+    .skill-body{display:none;padding:0 1.4rem 1.4rem}
+    .skill-card.open .skill-body{display:block}
+    .rationale-box{background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:.7rem 1rem;font-size:.83rem;color:var(--text2);margin-bottom:1rem;line-height:1.6}
+    .evidence-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.1rem}
+    .evidence-chip{font-family:'JetBrains Mono',monospace;font-size:.7rem;background:var(--bg);border:1px solid var(--border2);color:var(--accent3);padding:3px 9px;border-radius:5px}
+    .questions-label{font-size:.74rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+    .questions-list{display:flex;flex-direction:column;gap:.65rem}
+    .question-item{background:var(--bg3);border-radius:10px;padding:.9rem 1rem;border-left:3px solid transparent}
+    .question-item.conceptual{border-left-color:var(--accent2)}
+    .question-item.codebase{border-left-color:var(--accent3)}
+    .q-focus-badge{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:4px;margin-bottom:.4rem;display:inline-block}
+    .conceptual .q-focus-badge{background:#a78bfa20;color:var(--accent2)}
+    .codebase .q-focus-badge{background:#38bdf820;color:var(--accent3)}
+    .q-text{font-size:.88rem;font-weight:600;margin-bottom:.4rem;line-height:1.5}
+    .q-points{list-style:none;display:flex;flex-direction:column;gap:.2rem}
+    .q-points li{font-size:.78rem;color:var(--text2);display:flex;gap:.4rem}
+    .q-points li::before{content:'→';color:var(--accent);flex-shrink:0}
+
+    /* EVALUATION */
+    .eval-summary-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.4rem;margin-bottom:1.4rem}
+    .eval-summary-text{color:var(--text2);line-height:1.7;font-size:.88rem}
+    .strengths-gaps{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.4rem}
+    @media(max-width:600px){.strengths-gaps{grid-template-columns:1fr}}
+    .sg-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.1rem}
+    .sg-title{font-size:.8rem;font-weight:700;margin-bottom:.7rem;display:flex;gap:.4rem;align-items:center}
+    .sg-list{list-style:none;display:flex;flex-direction:column;gap:.4rem}
+    .sg-list li{font-size:.83rem;color:var(--text2);display:flex;gap:.6rem;line-height:1.5}
+    .outcome-list{display:flex;flex-direction:column;gap:.7rem}
+    .outcome-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.1rem}
+    .outcome-top{display:flex;align-items:flex-start;gap:.9rem;margin-bottom:.6rem}
+    .outcome-status{font-size:1rem;flex-shrink:0}
+    .outcome-text{font-size:.88rem;font-weight:600;line-height:1.4}
+    .outcome-confidence{font-size:.76rem;color:var(--text3);display:flex;align-items:center;gap:.3rem;margin-top:.2rem}
+    .outcome-evidence{font-size:.8rem;color:var(--text2);font-style:italic}
+    .outcome-gaps{margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.35rem}
+    .gap-chip{font-size:.7rem;background:#f8717110;border:1px solid #f8717130;color:var(--red);padding:2px 7px;border-radius:4px}
+
+    /* TECH */
+    .tech-section-title{font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem;margin-top:1.4rem}
+    .tech-chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:.75rem}
+    .tech-chip{font-size:.8rem;padding:.3rem .8rem;border-radius:7px;border:1px solid var(--border);background:var(--bg2);font-weight:500;transition:border-color .2s}
+    .tech-chip:hover{border-color:var(--accent)}
+    .tech-chip.lang{border-color:#6c63ff40;color:var(--accent2);background:#6c63ff08}
+    .tech-chip.fw{border-color:#38bdf840;color:var(--accent3);background:#38bdf808}
+    .tech-chip.dep{border-color:var(--border);color:var(--text2)}
+
+    /* SECURITY */
+    .flag-list{display:flex;flex-direction:column;gap:.55rem}
+    .flag-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.85rem 1.1rem;display:flex;gap:.9rem;align-items:flex-start}
+    .flag-sev{font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:4px;min-width:52px;text-align:center;flex-shrink:0;margin-top:1px}
+    .flag-sev.high{background:#f8717120;color:var(--red);border:1px solid #f8717130}
+    .flag-sev.medium{background:#fbbf2420;color:var(--yellow);border:1px solid #fbbf2430}
+    .flag-sev.low{background:#34d39920;color:var(--green);border:1px solid #34d39930}
+    .flag-info{flex:1}
+    .flag-path{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--accent3);margin-bottom:.2rem}
+    .flag-desc{font-size:.82rem;color:var(--text2)}
+    .flag-line{font-size:.72rem;color:var(--text3);margin-top:.15rem}
+
+    /* META */
+    .meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.9rem}
+    .meta-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.1rem}
+    .meta-val{font-size:1.35rem;font-weight:800;color:var(--accent2);font-family:'JetBrains Mono',monospace}
+    .meta-label{font-size:.72rem;color:var(--text3);margin-top:.2rem}
+
+    /* JSON */
+    .json-wrap{position:relative}
+    .json-copy-btn{position:absolute;top:.75rem;right:.75rem;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:.3rem .7rem;border-radius:7px;font-size:.73rem;cursor:pointer;transition:all .2s}
+    .json-copy-btn:hover{border-color:var(--accent);color:var(--text)}
+    pre.json-view{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.76rem;line-height:1.7;color:var(--text2);max-height:500px;overflow-y:auto}
+    .json-key{color:var(--accent2)} .json-str{color:var(--green)} .json-num{color:var(--accent3)} .json-bool{color:var(--yellow)}
+
+    /* ERROR */
+    .error-card{background:#f8717110;border:1px solid #f8717140;border-radius:14px;padding:1.4rem;margin-bottom:1.4rem;display:flex;gap:1rem;align-items:flex-start}
+    .error-title{font-weight:700;color:var(--red);margin-bottom:.3rem}
+    .error-msg{font-size:.86rem;color:var(--text2);line-height:1.6}
+
+    /* EMPTY */
+    .empty-state{text-align:center;padding:2.5rem;color:var(--text3)}
+    .empty-state .empty-icon{font-size:2.5rem;margin-bottom:.75rem}
+    .empty-state p{font-size:.88rem}
+
+    /* FOOTER */
+    footer{text-align:center;padding:2.5rem 2rem;border-top:1px solid var(--border);color:var(--text3);font-size:.8rem}
+    footer a{color:var(--accent2);text-decoration:none}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{animation:fadeIn .45s ease forwards}
+    .pulse-border{animation:pulseBorder 2s infinite}
+    @keyframes pulseBorder{0%,100%{border-color:var(--accent)30}50%{border-color:var(--accent)80}}
+  </style>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="app">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><div class="nav-dot"></div>AI Submission Analyzer</div>
+  <div class="nav-links">
+    <a href="#analyzer">Analyze</a>
+    <a href="#features">Features</a>
+    <a href="http://localhost:8000/docs" target="_blank">API Docs</a>
+    <!-- Nav toggle -->
+    <div class="llm-toggle-wrap">
+      <span class="llm-toggle-label">LLM:</span>
+      <div class="toggle-pill">
+        <button class="toggle-opt active-gemini" id="navGemini" onclick="setProvider('gemini')">✦ Gemini</button>
+        <button class="toggle-opt" id="navLocal" onclick="setProvider('local')">⚡ Local</button>
+      </div>
+    </div>
+    <span class="nav-badge">v1.0</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">🎓 AI-Powered Mentor Tool</div>
+  <h1>Analyze Student Projects<br/>Like a Senior Engineer</h1>
+  <p>Upload a project ZIP → get skill detection, viva questions, outcome evaluation, and security scanning — powered by Gemini or your local LLM.</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">🚀 Try It Now</button>
+    <a href="http://localhost:8000/docs" target="_blank"><button class="btn-ghost">📖 API Docs</button></a>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-val">50</div><div class="stat-label">Skills in Catalog</div></div>
+    <div class="stat"><div class="stat-val">5</div><div class="stat-label">Gemini Keys</div></div>
+    <div class="stat"><div class="stat-val">8</div><div class="stat-label">Security Checks</div></div>
+    <div class="stat"><div class="stat-val">CAG</div><div class="stat-label">Context Pipeline</div></div>
+  </div>
+</div>
+
+<!-- ANALYZER (moved to top) -->
+<section id="analyzer">
+  <div class="section-tag">Live Demo</div>
+  <div class="section-title">Analyze a Submission</div>
+  <div class="section-sub" style="margin-bottom:1.75rem">Fill in the project details and upload the student's ZIP file. Choose your LLM provider below.</div>
+
+  <!-- LLM PROVIDER BAR -->
+  <div class="llm-provider-bar">
+    <div class="llm-provider-info">
+      <div class="llm-provider-title" id="providerTitle">✦ Using Gemini AI</div>
+      <div class="llm-provider-desc" id="providerDesc">Powered by Google Gemini with 5-key rotation</div>
+    </div>
+    <div class="llm-big-toggle">
+      <button class="llm-big-opt sel-gemini" id="bigGemini" onclick="setProvider('gemini')">
+        <span class="llm-status-dot online" id="geminiDot"></span>✦ Gemini AI
+      </button>
+      <button class="llm-big-opt" id="bigLocal" onclick="setProvider('local')">
+        <span class="llm-status-dot" id="localDot"></span>⚡ Local LLM
+      </button>
+    </div>
+  </div>
+
+  <!-- QUICK FILL -->
+  <div class="quick-fill-bar">
+    <span class="quick-fill-label">⚡ Quick Fill:</span>
+    <button class="qf-btn" onclick="quickFill('fastapi')">FastAPI Project</button>
+    <button class="qf-btn" onclick="quickFill('ml')">ML Project</button>
+    <button class="qf-btn" onclick="quickFill('react')">React App</button>
+    <button class="qf-btn" onclick="quickFill('fullstack')">Full Stack</button>
+  </div>
+
+  <div class="form-card">
+    <div class="form-header">
+      <h2>🎓 Project Submission</h2>
+      <p>All analysis is read-only — no code is executed, nothing is stored</p>
+    </div>
+    <div class="form-body">
+      <div class="form-row">
+        <div>
+          <label>Project Title <span class="req">*</span></label>
+          <input type="text" id="projectTitle" placeholder="e.g. Student Inventory Management System" />
+        </div>
+        <div>
+          <label>Questions Per Skill</label>
+          <div class="slider-wrap">
+            <input type="range" id="questionsSlider" min="1" max="10" value="3"
+              oninput="document.getElementById('qVal').textContent=this.value;this.style.setProperty('--val',(this.value-1)/9*100+'%')" />
+            <div class="slider-val" id="qVal">3</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <label>Project Description <span class="req">*</span></label>
+        <textarea id="projectDesc" rows="3" placeholder="Describe what the project does, its purpose and main functionality..."></textarea>
+      </div>
+      <div>
+        <label>Project Outcomes <span class="req">*</span></label>
+        <textarea id="projectOutcomes" rows="3" placeholder="List what the student aimed to achieve, e.g:&#10;- Implement a REST API with CRUD operations&#10;- Integrate a database&#10;- Add user authentication"></textarea>
+      </div>
+      <div>
+        <label>Project ZIP File <span class="req">*</span></label>
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept=".zip" onchange="handleFileSelect(this.files[0])" />
+          <div class="drop-default">
+            <div class="drop-icon">📁</div>
+            <div class="drop-title">Drop ZIP here or click to browse</div>
+            <div class="drop-sub">Max 50MB · .zip only · 5–15 source files recommended</div>
+          </div>
+          <div class="drop-file-name" id="dropFileName"></div>
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="submit-btn" id="submitBtn" onclick="submitAnalysis()">
+        <span class="btn-text" id="submitBtnText">🔍 Analyze with Gemini AI</span>
+        <div class="btn-spinner"></div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRESS -->
+<div id="progressSection">
+  <div class="progress-card pulse-border" style="max-width:900px;margin:0 auto 3rem;padding:2rem 2rem">
+    <div class="progress-title">
+      <div class="progress-spinner"></div>
+      <span id="progressTitle">Analyzing submission…</span>
+    </div>
+    <div class="steps-list" id="stepsList"></div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsSection">
+  <div style="max-width:900px;margin:0 auto;padding:0 2rem 6rem">
+    <div class="results-header">
+      <div>
+        <div class="results-title" id="resultsTitle">Analysis Complete</div>
+        <div class="results-meta" id="resultsMeta"></div>
+      </div>
+      <div class="results-actions">
+        <button class="btn-sm" onclick="newAnalysis()">← New Analysis</button>
+        <button class="btn-sm primary" onclick="downloadReport()">⬇ Download JSON</button>
+      </div>
+    </div>
+    <div id="analysisNote"></div>
+    <div id="securityBanner"></div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('skills')" id="tab-skills">Skills <span class="tab-badge" id="skills-count">0</span></button>
+      <button class="tab" onclick="switchTab('evaluation')" id="tab-evaluation">Evaluation</button>
+      <button class="tab" onclick="switchTab('tech')" id="tab-tech">Tech Stack</button>
+      <button class="tab" onclick="switchTab('security')" id="tab-security">Security <span class="tab-badge" id="security-count">0</span></button>
+      <button class="tab" onclick="switchTab('metadata')" id="tab-metadata">Metadata</button>
+      <button class="tab" onclick="switchTab('json')" id="tab-json">Raw JSON</button>
+    </div>
+    <div class="tab-content active" id="tab-content-skills"><div class="skills-grid" id="skillsGrid"></div></div>
+    <div class="tab-content" id="tab-content-evaluation">
+      <div class="eval-summary-box"><div class="section-tag" style="margin-bottom:.5rem">Summary</div><div class="eval-summary-text" id="evalSummary"></div></div>
+      <div class="strengths-gaps" id="strengthsGaps"></div>
+      <div class="section-tag" style="margin-bottom:.65rem">Outcome Evaluations</div>
+      <div class="outcome-list" id="outcomeList"></div>
+    </div>
+    <div class="tab-content" id="tab-content-tech"><div id="techContent"></div></div>
+    <div class="tab-content" id="tab-content-security"><div id="securityContent"></div></div>
+    <div class="tab-content" id="tab-content-metadata"><div class="meta-grid" id="metaGrid"></div></div>
+    <div class="tab-content" id="tab-content-json">
+      <div class="json-wrap">
+        <button class="json-copy-btn" onclick="copyJson()">Copy</button>
+        <pre class="json-view" id="jsonView"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE + FEATURES below fold -->
+<section id="features" style="border-top:1px solid var(--border)">
+  <div class="section-tag">How it works</div>
+  <div class="section-title">From ZIP to Mentor Report</div>
+  <div class="section-sub">A deterministic static analysis pipeline augmented by LLM — no code execution, no database.</div>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="step-icon">📦</div><div class="step-label">Upload ZIP</div><div class="step-desc">Size & type validation</div></div>
+    <div class="pipeline-step"><div class="step-icon">🔒</div><div class="step-label">Secure Extract</div><div class="step-desc">Path traversal & zip bomb protection</div></div>
+    <div class="pipeline-step"><div class="step-icon">🛡️</div><div class="step-label">Security Scan</div><div class="step-desc">Static pattern analysis, never executes code</div></div>
+    <div class="pipeline-step"><div class="step-icon">🔍</div><div class="step-label">Scan Code</div><div class="step-desc">Languages, frameworks, dependencies</div></div>
+    <div class="pipeline-step"><div class="step-icon">🧠</div><div class="step-label">Build CAG</div><div class="step-desc">Single context reused across all LLM prompts</div></div>
+    <div class="pipeline-step"><div class="step-icon">🎯</div><div class="step-label">Match Skills</div><div class="step-desc">50-skill catalog with confidence scores</div></div>
+    <div class="pipeline-step"><div class="step-icon">❓</div><div class="step-label">Viva Q&A</div><div class="step-desc">Conceptual + codebase-specific questions</div></div>
+    <div class="pipeline-step"><div class="step-icon">📊</div><div class="step-label">Evaluate</div><div class="step-desc">Outcome vs code alignment analysis</div></div>
+  </div>
+  <div class="features-grid" style="margin-top:4rem">
+    <div class="feature-card"><div class="feature-icon">🛡️</div><div class="feature-title">Security-First Extraction</div><div class="feature-desc">Blocks path traversal, zip bombs, malicious extensions, and symlinks. Code is never executed.</div></div>
+    <div class="feature-card"><div class="feature-icon">🔄</div><div class="feature-title">5-Key Gemini Rotation</div><div class="feature-desc">Automatically rotates across 5 Gemini API keys on quota/rate-limit errors. Thread-safe.</div></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Local LLM Support</div><div class="feature-desc">Connects to LM Studio (Qwen, Gemma, Llama etc.) via OpenAI-compatible API. No internet needed.</div></div>
+    <div class="feature-card"><div class="feature-icon">📚</div><div class="feature-title">50-Skill Catalog</div><div class="feature-desc">Covers Languages, Frontend, Backend, Databases, Cloud, DevOps, Data & AI, Mobile, Security.</div></div>
+    <div class="feature-card"><div class="feature-icon">🎤</div><div class="feature-title">Viva Questions</div><div class="feature-desc">LLM-generated conceptual and codebase-specific questions per detected skill with key points.</div></div>
+    <div class="feature-card"><div class="feature-icon">✅</div><div class="feature-title">Graceful Fallbacks</div><div class="feature-desc">LLM unavailable? Every failure path returns a partial report. No hard crashes.</div></div>
+  </div>
+</section>
+
+<footer>AI Submission Analyzer · Phase 1 MVP · <a href="http://localhost:8000/docs" target="_blank">API Docs</a> · Built with FastAPI + Gemini/LM Studio</footer>
+</div><!-- .app -->
+
+<script>
+// ── Canvas particles ──
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let pts = [];
+function resizeC(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeC(); window.addEventListener('resize',resizeC);
+for(let i=0;i<70;i++) pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.4+.4,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,a:Math.random()*.4+.1});
+(function loop(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(108,99,255,${p.a})`;ctx.fill()});
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(108,99,255,${.12*(1-d/110)})`;ctx.lineWidth=.5;ctx.stroke()}}
+  requestAnimationFrame(loop);
+})();
+
+// ── Drag & drop ──
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)handleFileSelect(f)});
+let selectedFile=null;
+function handleFileSelect(file){
+  if(!file)return;
+  if(!file.name.endsWith('.zip')){showToast('❌ Please select a .zip file','error');return}
+  if(file.size>50*1024*1024){showToast('❌ File exceeds 50MB limit','error');return}
+  selectedFile=file;
+  const sz=file.size>1024*1024?(file.size/1024/1024).toFixed(1)+'MB':(file.size/1024).toFixed(0)+'KB';
+  document.getElementById('dropFileName').textContent=`📦 ${file.name}  (${sz})`;
+  dz.classList.add('has-file');
+  showToast('✅ File ready: '+file.name,'success');
+}
+
+// ── LLM Provider toggle ──
+let activeProvider = 'gemini';
+async function setProvider(p){
+  activeProvider=p;
+  // Nav toggle
+  document.getElementById('navGemini').className='toggle-opt'+(p==='gemini'?' active-gemini':'');
+  document.getElementById('navLocal').className='toggle-opt'+(p==='local'?' active-local':'');
+  // Big toggle
+  document.getElementById('bigGemini').className='llm-big-opt'+(p==='gemini'?' sel-gemini':'');
+  document.getElementById('bigLocal').className='llm-big-opt'+(p==='local'?' sel-local':'');
+  // Descriptions
+  if(p==='gemini'){
+    document.getElementById('providerTitle').textContent='✦ Using Gemini AI';
+    document.getElementById('providerDesc').textContent='Powered by Google Gemini 1.5 Flash with 5-key rotation';
+    document.getElementById('submitBtnText').textContent='🔍 Analyze with Gemini AI';
+  } else {
+    document.getElementById('providerTitle').textContent='⚡ Using Local LLM (LM Studio)';
+    document.getElementById('providerDesc').textContent='Qwen 3.5 9B via LM Studio at 127.0.0.1:1234';
+    document.getElementById('submitBtnText').textContent='🔍 Analyze with Local LLM';
+  }
+  // Check local status
+  if(p==='local') checkLocalStatus();
+}
+
+async function checkLocalStatus(){
+  const dot = document.getElementById('localDot');
+  dot.className='llm-status-dot';
+  try{
+    const r=await fetch('http://127.0.0.1:1234/v1/models',{signal:AbortSignal.timeout(4000)});
+    dot.className='llm-status-dot '+(r.ok?'online':'offline');
+    if(!r.ok) showToast('⚠️ LM Studio responded with error','warn');
+    else showToast('✅ LM Studio connected — Qwen 3.5 9B ready','success');
+  }catch(e){
+    dot.className='llm-status-dot offline';
+    showToast('❌ LM Studio not reachable at 127.0.0.1:1234','error');
+  }
+}
+
+// check local on load
+setTimeout(()=>{ fetch('http://127.0.0.1:1234/v1/models',{signal:AbortSignal.timeout(3000)}).then(r=>{if(r.ok)document.getElementById('localDot').className='llm-status-dot online'}).catch(()=>{}) },800);
+
+// ── Quick Fill presets ──
+const PRESETS = {
+  fastapi:{title:'Student REST API with FastAPI',desc:'A Python FastAPI project implementing a RESTful API for managing student records with CRUD operations, input validation using Pydantic, and structured JSON responses.',outcomes:'- Build a FastAPI REST API with full CRUD operations\n- Implement Pydantic models for request/response validation\n- Add proper error handling and HTTP status codes\n- Structure the project with routers and services'},
+  ml:{title:'Machine Learning Classification Project',desc:'A Python machine learning project that trains a classification model on a dataset, performs exploratory data analysis, feature engineering, and evaluates model performance.',outcomes:'- Perform EDA and data preprocessing with Pandas and NumPy\n- Train and evaluate a classification model using scikit-learn\n- Visualize results with Matplotlib/Seaborn\n- Achieve at least 80% accuracy on the test set'},
+  react:{title:'React Todo Application',desc:'A React frontend application with state management, component-based architecture, API integration, and responsive design using modern React hooks.',outcomes:'- Build a React app with functional components and hooks\n- Implement state management with useState and useEffect\n- Fetch data from an external API\n- Create a responsive UI with CSS/Tailwind'},
+  fullstack:{title:'Full Stack Web Application',desc:'A full stack application with a Node.js/Express backend, React frontend, MongoDB database integration, user authentication with JWT, and REST API design.',outcomes:'- Build a REST API with Express.js and proper routing\n- Implement JWT-based user authentication\n- Connect to MongoDB with Mongoose\n- Create a React frontend that consumes the API\n- Deploy with Docker'}
+};
+function quickFill(key){
+  const p=PRESETS[key];
+  document.getElementById('projectTitle').value=p.title;
+  document.getElementById('projectDesc').value=p.desc;
+  document.getElementById('projectOutcomes').value=p.outcomes;
+  showToast('✅ Quick fill applied: '+p.title,'success');
+}
+
+// ── Progress steps ──
+const STEPS=[
+  {id:'upload',label:'Validating & uploading ZIP'},
+  {id:'extract',label:'Secure ZIP extraction (path traversal + zip bomb check)'},
+  {id:'scan',label:'Scanning project files & building file tree'},
+  {id:'security',label:'Running static security scan'},
+  {id:'tech',label:'Detecting languages, frameworks & dependencies'},
+  {id:'context',label:'Building CAG context for LLM'},
+  {id:'skills',label:'Matching skills against 50-skill catalog'},
+  {id:'questions',label:'Generating viva questions via LLM'},
+  {id:'evaluate',label:'Evaluating project outcomes via LLM'},
+  {id:'report',label:'Assembling final report'},
+];
+let stepTimers=[]; let rawResult=null;
+
+function renderSteps(){
+  document.getElementById('stepsList').innerHTML=STEPS.map(s=>`
+    <div class="progress-step" id="pstep-${s.id}">
+      <div class="step-status" id="pstatus-${s.id}">⏳</div>
+      <div class="step-name">${s.label}</div>
+      <div class="step-time" id="ptime-${s.id}"></div>
+    </div>`).join('');
+}
+function activateStep(id){document.getElementById(`pstep-${id}`)?.classList.add('active');document.getElementById(`pstatus-${id}`).textContent='🔄'}
+function completeStep(id,ms){const el=document.getElementById(`pstep-${id}`);el?.classList.remove('active');el?.classList.add('done');document.getElementById(`pstatus-${id}`).textContent='✅';if(ms!==undefined)document.getElementById(`ptime-${id}`).textContent=ms.toFixed(0)+'ms'}
+
+function simulateProgress(onDone){
+  let i=0;
+  const delays=[300,600,700,500,600,800,900,1400,1800,400];
+  const starts=[];
+  function next(){
+    if(i>=STEPS.length){
+      document.getElementById('progressTitle').innerHTML=
+        `<span style="color:var(--accent2)">⏳ Waiting for LLM response… this may take a minute</span>`;
+      onDone(); return;
+    }
+    activateStep(STEPS[i].id);
+    starts[i]=Date.now();
+    const w=delays[i]+Math.random()*250;
+    stepTimers.push(setTimeout(()=>{completeStep(STEPS[i].id,Date.now()-starts[i]);i++;next()},w));
+  }
+  next();
+}
+</script>
+
+<script>
+async function submitAnalysis(){
+  const title=document.getElementById('projectTitle').value.trim();
+  const desc=document.getElementById('projectDesc').value.trim();
+  const outcomes=document.getElementById('projectOutcomes').value.trim();
+  const qCount=parseInt(document.getElementById('questionsSlider').value);
+  if(!title){showToast('❌ Project title is required','error');return}
+  if(desc.length<10){showToast('❌ Description too short (min 10 chars)','error');return}
+  if(outcomes.length<10){showToast('❌ Outcomes too short (min 10 chars)','error');return}
+  if(!selectedFile){showToast('❌ Please upload a ZIP file','error');return}
+
+  document.getElementById('resultsSection').style.display='none';
+  document.getElementById('progressSection').style.display='block';
+  document.getElementById('progressSection').scrollIntoView({behavior:'smooth'});
+  document.getElementById('progressTitle').textContent=`Analyzing with ${activeProvider==='gemini'?'✦ Gemini AI':'⚡ Local LLM ('+document.getElementById('providerDesc').textContent.split(' via')[0].replace('Qwen','Qwen')+')'}…`;
+  renderSteps();
+
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true; btn.classList.add('loading');
+
+  const fd=new FormData();
+  fd.append('project_title',title);
+  fd.append('project_description',desc);
+  fd.append('project_outcomes',outcomes);
+  fd.append('questions_per_skill',qCount);
+  fd.append('llm_provider',activeProvider);
+  fd.append('zip_file',selectedFile);
+
+  let apiDone=false, apiResult=null, apiError=null;
+  simulateProgress(()=>{/* visual only — don't render here, wait for API */});
+
+  try{
+    const res=await fetch('http://localhost:8000/api/v1/analyze-submission',{method:'POST',body:fd});
+    const data=await res.json();
+    if(!res.ok) apiError=data?.detail?.message||data?.detail||data?.error?.message||`HTTP ${res.status}`;
+    else apiResult=data;
+  }catch(e){
+    apiError='Could not connect to the analyzer server at localhost:8000. Make sure it is running.';
+  } finally {
+    apiDone=true;
+    btn.disabled=false; btn.classList.remove('loading');
+    // Render immediately — don't wait for the visual animation
+    stepTimers.forEach(clearTimeout); stepTimers=[];
+    STEPS.forEach(s=>completeStep(s.id));
+    renderResults(apiResult,apiError);
+  }
+}
+
+function renderResults(data,error){
+  stepTimers.forEach(clearTimeout); stepTimers=[];
+  document.getElementById('progressSection').style.display='none';
+  document.getElementById('resultsSection').style.display='block';
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth'});
+
+  if(error||!data){
+    document.getElementById('analysisNote').innerHTML=`<div class="error-card fade-in"><div class="error-icon" style="font-size:1.5rem">❌</div><div><div class="error-title">Analysis Failed</div><div class="error-msg">${escHtml(String(error||'Unknown error'))}</div></div></div>`;
+    ['skillsGrid','securityBanner'].forEach(id=>document.getElementById(id).innerHTML='');
+    document.getElementById('resultsTitle').textContent='Analysis Failed';
+    document.getElementById('resultsMeta').textContent='';
+    return;
+  }
+  rawResult=data;
+  document.getElementById('resultsTitle').textContent='✅ '+escHtml(data.project_title||'Analysis Complete');
+  const prov=data.metadata?.llm_provider||'gemini';
+  document.getElementById('resultsMeta').innerHTML=`
+    <span class="provider-chip ${prov}">${prov==='gemini'?'✦ Gemini AI':'⚡ Local LLM'}</span>
+    ${data.metadata?.files_analyzed||0} files · ${(data.metadata?.model_tokens_used||0).toLocaleString()} tokens · ${Math.round(data.processing_time_ms||0)}ms`;
+
+  const noteEl=document.getElementById('analysisNote');
+  noteEl.innerHTML=data.analysis_note?`<div class="analysis-note fade-in"><span>💡</span><span>${escHtml(data.analysis_note)}</span></div>`:'';
+
+  const flags=data.security_scan?.flags||[];
+  const sb=document.getElementById('securityBanner');
+  if(data.security_scan?.has_high_severity)
+    sb.innerHTML=`<div class="security-banner danger fade-in">🚨 <strong>High-severity security patterns detected</strong> — ${flags.length} flag(s). Review Security tab.</div>`;
+  else if(flags.length)
+    sb.innerHTML=`<div class="security-banner warn fade-in">⚠️ ${flags.length} low/medium security pattern(s) detected.</div>`;
+  else
+    sb.innerHTML=`<div class="security-banner ok fade-in">✅ No security concerns detected.</div>`;
+
+  document.getElementById('skills-count').textContent=(data.suggested_skills||[]).length;
+  document.getElementById('security-count').textContent=flags.length;
+
+  renderSkills(data.suggested_skills||[]);
+  renderEvaluation(data.evaluation_report);
+  renderTech(data.tech_detection);
+  renderSecurity(data.security_scan);
+  renderMeta(data.metadata,data.processing_time_ms);
+  renderJson(data);
+}
+
+// ── Category map for sk-001 … sk-050 ──
+const CAT={
+  'sk-001':'Language','sk-002':'Language','sk-003':'Language','sk-004':'Language','sk-005':'Language','sk-006':'Language','sk-007':'Language','sk-008':'Language',
+  'sk-009':'Frontend','sk-010':'Frontend','sk-011':'Frontend','sk-012':'Frontend','sk-013':'Frontend','sk-014':'Frontend','sk-015':'Frontend',
+  'sk-016':'Backend','sk-017':'Backend','sk-018':'Backend','sk-019':'Backend','sk-020':'Backend','sk-021':'Backend','sk-022':'Backend','sk-023':'Backend',
+  'sk-024':'Database','sk-025':'Database','sk-026':'Database','sk-027':'Database','sk-028':'Database','sk-029':'Database',
+  'sk-030':'Cloud','sk-031':'Cloud','sk-032':'Cloud','sk-033':'Cloud',
+  'sk-034':'DevOps','sk-035':'DevOps','sk-036':'DevOps','sk-037':'DevOps','sk-038':'DevOps','sk-039':'DevOps','sk-040':'DevOps',
+  'sk-041':'Data & AI','sk-042':'Data & AI','sk-043':'Data & AI','sk-044':'Data & AI','sk-045':'Data & AI','sk-046':'Data & AI',
+  'sk-047':'Mobile','sk-048':'Mobile','sk-049':'Mobile','sk-050':'Security'
+};
+
+function renderSkills(skills){
+  const g=document.getElementById('skillsGrid');
+  if(!skills.length){g.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><p>No skills matched from the catalog.<br/>Try a project with recognizable source files.</p></div>`;return}
+  g.innerHTML=skills.map((sw,i)=>{
+    const s=sw.skill||sw; const qs=sw.questions||[];
+    const pct=(s.confidence*100).toFixed(0);
+    const col=s.confidence>=.7?'var(--green)':s.confidence>=.4?'var(--yellow)':'var(--red)';
+    return `<div class="skill-card fade-in" id="sc${i}" style="animation-delay:${i*.06}s">
+      <div class="skill-header" onclick="tog(${i})">
+        <div class="skill-cat-badge">${CAT[s.skill_id]||'Skill'}</div>
+        <div style="flex:1"><div class="skill-name">${escHtml(s.skill_name)}</div><div class="skill-id">${escHtml(s.skill_id)}</div></div>
+        <div class="conf-wrap">
+          <div class="conf-label"><span>Confidence</span><span style="color:${col};font-weight:700">${pct}%</span></div>
+          <div class="conf-bar"><div class="conf-fill" style="width:${pct}%;background:${col}"></div></div>
+        </div>
+        ${s.low_confidence?`<div class="low-badge">Low</div>`:''}
+        <div class="skill-toggle">▼</div>
+      </div>
+      <div class="skill-body">
+        <div class="rationale-box">${escHtml(s.rationale||'No rationale.')}</div>
+        ${(s.evidence||[]).length?`<div class="evidence-chips">${s.evidence.slice(0,4).map(e=>`<div class="evidence-chip">${escHtml(e.file_path)}</div>`).join('')}</div>`:''}
+        ${qs.length?`<div class="questions-label">Viva Questions</div>
+        <div class="questions-list">${qs.map(q=>`
+          <div class="question-item ${escHtml(q.question_focus)}">
+            <div class="q-focus-badge">${q.question_focus==='conceptual'?'🧠 Conceptual':'💻 Codebase'}</div>
+            <div class="q-text">${escHtml(q.question_text)}</div>
+            ${q.expected_key_points?.length?`<ul class="q-points">${q.expected_key_points.map(p=>`<li>${escHtml(p)}</li>`).join('')}</ul>`:''}</div>`).join('')}</div>`:''}
+      </div></div>`;
+  }).join('');
+}
+function tog(i){document.getElementById(`sc${i}`)?.classList.toggle('open')}
+
+function renderEvaluation(r){
+  if(!r)return;
+  document.getElementById('evalSummary').textContent=r.summary||'No summary.';
+  document.getElementById('strengthsGaps').innerHTML=`
+    <div class="sg-box"><div class="sg-title" style="color:var(--green)">✅ Strengths</div><ul class="sg-list">${(r.strengths||[]).length?(r.strengths||[]).map(s=>`<li><span>→</span>${escHtml(s)}</li>`).join(''):'<li style="color:var(--text3)">None identified</li>'}</ul></div>
+    <div class="sg-box"><div class="sg-title" style="color:var(--red)">⚠️ Gaps</div><ul class="sg-list">${(r.gaps||[]).length?(r.gaps||[]).map(g=>`<li><span>→</span>${escHtml(g)}</li>`).join(''):'<li style="color:var(--text3)">None identified</li>'}</ul></div>`;
+  document.getElementById('outcomeList').innerHTML=(r.outcome_evaluations||[]).length
+    ?(r.outcome_evaluations||[]).map(o=>`<div class="outcome-item fade-in">
+        <div class="outcome-top"><div class="outcome-status">${o.is_met?'✅':'❌'}</div>
+          <div><div class="outcome-text">${escHtml(o.stated_outcome)}</div>
+          <div class="outcome-confidence"><span>Confidence:</span><span style="color:${o.confidence>=.7?'var(--green)':o.confidence>=.4?'var(--yellow)':'var(--red)'};font-weight:700">${(o.confidence*100).toFixed(0)}%</span></div></div></div>
+        ${o.evidence?`<div class="outcome-evidence">📎 ${escHtml(o.evidence)}</div>`:''}
+        ${o.gaps?.length?`<div class="outcome-gaps">${o.gaps.map(g=>`<div class="gap-chip">${escHtml(g)}</div>`).join('')}</div>`:''}</div>`).join('')
+    :`<div class="empty-state"><div class="empty-icon">📋</div><p>No outcome evaluations.</p></div>`;
+}
+
+function renderTech(t){
+  if(!t)return;
+  let h='';
+  if(t.languages?.length)h+=`<div class="tech-section-title">🗣 Languages</div><div class="tech-chips">${t.languages.map(l=>`<div class="tech-chip lang">${escHtml(l)}</div>`).join('')}</div>`;
+  if(t.frameworks?.length)h+=`<div class="tech-section-title">⚡ Frameworks & Libraries</div><div class="tech-chips">${t.frameworks.map(f=>`<div class="tech-chip fw">${escHtml(f)}</div>`).join('')}</div>`;
+  if(t.dependency_files_found?.length)h+=`<div class="tech-section-title">📦 Dependency Files</div><div class="tech-chips">${t.dependency_files_found.map(f=>`<div class="tech-chip">${escHtml(f)}</div>`).join('')}</div>`;
+  if(t.dependencies?.length)h+=`<div class="tech-section-title">📚 Dependencies (${t.dependencies.length})</div><div class="tech-chips">${t.dependencies.slice(0,40).map(d=>`<div class="tech-chip dep">${escHtml(d)}</div>`).join('')}${t.dependencies.length>40?`<div class="tech-chip dep">+${t.dependencies.length-40} more</div>`:''}</div>`;
+  if(!h)h='<div class="empty-state"><div class="empty-icon">🔬</div><p>No technologies detected.</p></div>';
+  document.getElementById('techContent').innerHTML=h;
+}
+
+function renderSecurity(scan){
+  if(!scan)return;
+  const flags=scan.flags||[];
+  let h=`<div class="security-banner ${scan.has_high_severity?'danger':flags.length?'warn':'ok'} fade-in" style="margin-bottom:1.25rem">${scan.has_high_severity?'🚨':'✅'} ${escHtml(scan.summary||'Scan complete.')}</div>`;
+  h+=flags.length?`<div class="flag-list">${flags.map(f=>`<div class="flag-item fade-in"><div class="flag-sev ${escHtml(f.severity)}">${f.severity.toUpperCase()}</div><div class="flag-info"><div class="flag-path">${escHtml(f.file_path)}</div><div class="flag-desc">${escHtml(f.description)}</div>${f.line_number?`<div class="flag-line">Line ${f.line_number}</div>`:''}</div></div>`).join('')}</div>`
+    :`<div class="empty-state"><div class="empty-icon">🛡️</div><p>No suspicious patterns detected.</p></div>`;
+  document.getElementById('securityContent').innerHTML=h;
+}
+
+function renderMeta(m,ms){
+  if(!m)return;
+  document.getElementById('metaGrid').innerHTML=[
+    {v:m.files_analyzed,l:'Files Analyzed'},{v:m.skipped_files,l:'Files Skipped'},
+    {v:Math.round(m.extraction_time_ms)+'ms',l:'Extraction Time'},
+    {v:Math.round(m.analysis_time_ms)+'ms',l:'Analysis Time'},
+    {v:Math.round(ms)+'ms',l:'Total Processing'},
+    {v:(m.model_tokens_used||0).toLocaleString(),l:'Tokens Used'},
+    {v:m.llm_provider,l:'LLM Provider'},
+  ].map(c=>`<div class="meta-card fade-in"><div class="meta-val">${escHtml(String(c.v))}</div><div class="meta-label">${escHtml(c.l)}</div></div>`).join('');
+}
+
+function renderJson(data){
+  document.getElementById('jsonView').innerHTML=syntaxHL(JSON.stringify(data,null,2));
+}
+function syntaxHL(j){
+  return j.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,m=>{
+      let c='json-num';
+      if(/^"/.test(m))c=/:$/.test(m)?'json-key':'json-str';
+      else if(/true|false/.test(m))c='json-bool';
+      return `<span class="${c}">${m}</span>`;
+    });
+}
+
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById(`tab-${n}`).classList.add('active');
+  document.getElementById(`tab-content-${n}`).classList.add('active');
+}
+function escHtml(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function newAnalysis(){document.getElementById('resultsSection').style.display='none';document.getElementById('progressSection').style.display='none';document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})}
+function downloadReport(){if(!rawResult)return;const b=new Blob([JSON.stringify(rawResult,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`analysis-${Date.now()}.json`;a.click()}
+function copyJson(){if(!rawResult)return;navigator.clipboard.writeText(JSON.stringify(rawResult,null,2)).then(()=>showToast('✅ JSON copied!','success')).catch(()=>showToast('❌ Copy failed','error'))}
+
+function showToast(msg,type='info'){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.7rem 1.2rem;border-radius:10px;font-size:.86rem;font-weight:600;font-family:Inter,sans-serif;transition:all .3s;opacity:0;transform:translateY(20px);pointer-events:none;max-width:320px';document.body.appendChild(t)}
+  t.textContent=msg;
+  t.style.background=type==='error'?'#f8717120':type==='success'?'#34d39920':type==='warn'?'#fbbf2420':'#6c63ff20';
+  t.style.border=`1px solid ${type==='error'?'#f8717150':type==='success'?'#34d39950':type==='warn'?'#fbbf2450':'#6c63ff50'}`;
+  t.style.color=type==='error'?'#f87171':type==='success'?'#34d399':type==='warn'?'#fbbf24':'#a78bfa';
+  t.style.opacity='1';t.style.transform='translateY(0)';
+  clearTimeout(t._timer);t._timer=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(20px)'},3500);
+}
+// Init slider
+document.getElementById('questionsSlider').style.setProperty('--val','22.2%');
+</script>
+</body>
+</html>
