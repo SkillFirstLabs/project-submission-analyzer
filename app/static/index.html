@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectIQ | AI-Powered Project Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080710;
+            --card-bg: rgba(17, 16, 36, 0.65);
+            --card-border: 1px solid rgba(255, 255, 255, 0.07);
+            --card-border-active: 1px solid rgba(139, 92, 246, 0.4);
+            
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #ec4899;
+            --accent-gradient: linear-gradient(135deg, #8b5cf6, #d946ef);
+            --accent-glow: rgba(139, 92, 246, 0.25);
+            
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.15);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.15);
+            --info: #3b82f6;
+            --info-glow: rgba(59, 130, 246, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(217, 70, 239, 0.08) 0%, transparent 45%);
+            background-attachment: fixed;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 3rem 1.5rem;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0c18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #252349;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b376d;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Premium Header */
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+
+        header .logo-badge {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(217, 70, 239, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #c084fc;
+            display: inline-block;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+        }
+
+        header h1 {
+            font-size: 3.4rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.03em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        /* Glassmorphic Container */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: var(--card-border);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-gradient);
+            opacity: 0.8;
+        }
+
+        .card-header-main {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 2.2rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Form elements styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2.2rem;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid-2col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.8rem;
+            }
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .input-wrapper label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .custom-input {
+            width: 100%;
+            background-color: rgba(6, 5, 14, 0.75);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: var(--text-primary);
+            padding: 0.95rem 1.2rem;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+            background-color: rgba(6, 5, 14, 0.9);
+        }
+
+        textarea.custom-input {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Enhanced Drag Drop ZIP Upload Zone */
+        .drag-zone {
+            position: relative;
+            border: 2px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(6, 5, 14, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .drag-zone:hover, .drag-zone.dragover {
+            border-color: var(--accent-primary);
+            background-color: rgba(139, 92, 246, 0.04);
+            box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.05);
+        }
+
+        .drag-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .drag-icon-glow {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(217, 70, 239, 0.15));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .drag-zone:hover .drag-icon-glow {
+            transform: scale(1.1);
+        }
+
+        .drag-zone p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .drag-zone span {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .file-pill {
+            margin-top: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons & Glowing Effects */
+        .glowing-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 1.1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 1.2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+            gap: 0.8rem;
+        }
+
+        .glowing-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        .glowing-btn:active {
+            transform: translateY(1px);
+        }
+
+        .glowing-btn:disabled {
+            background: var(--gray-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loader Stepper design */
+        .loader-container {
+            display: none;
+            margin-top: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 2rem;
+        }
+
+        .stepper {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background-color: rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .step-item.active {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-glow);
+            animation: pulse-step 1.5s infinite alternate;
+        }
+
+        .step-item.completed {
+            color: var(--success);
+        }
+
+        .step-item.completed .step-circle {
+            border-color: var(--success);
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        @keyframes pulse-step {
+            from { transform: scale(1); box-shadow: 0 0 5px var(--accent-glow); }
+            to { transform: scale(1.08); box-shadow: 0 0 15px var(--accent-glow); }
+        }
+
+        /* Results dashboard */
+        #results-dashboard {
+            display: none;
+        }
+
+        /* Top Layout (Overview & Gauge) */
+        .dashboard-top-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        @media (min-width: 900px) {
+            .dashboard-top-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .overview-details-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .overview-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-desc {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Circular Gauge Chart */
+        .glowing-gauge-card {
+            background: rgba(9, 8, 20, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .gauge-svg-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin-bottom: 1rem;
+        }
+
+        .gauge-svg-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .gauge-ring-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 10px;
+        }
+
+        .gauge-ring-fill {
+            fill: none;
+            stroke: var(--accent-primary);
+            stroke-width: 10px;
+            stroke-linecap: round;
+            stroke-dasharray: 377; /* 2 * pi * r (r=60) -> ~377 */
+            stroke-dashoffset: 377;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 5px var(--accent-glow));
+        }
+
+        .gauge-ring-value-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.05em;
+        }
+
+        .badge-align {
+            display: inline-block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-align.strong { background-color: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
+        .badge-align.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25); }
+        .badge-align.weak { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
+
+        /* Tabs Navigation system */
+        .tabs-nav {
+            display: flex;
+            background: rgba(6, 5, 14, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.4rem;
+            margin-bottom: 2.5rem;
+            overflow-x: auto;
+            gap: 0.25rem;
+            white-space: nowrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.75rem 1.4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: var(--accent-gradient);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
+        /* Tab Content panels */
+        .tab-panel {
+            display: none;
+            animation: fadeInTab 0.4s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Narrative blocks */
+        .narrative-quote-box {
+            background-color: rgba(139, 92, 246, 0.03);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1.8rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            color: #e5e7eb;
+        }
+
+        /* Dynamic Tree Viewer */
+        .tree-viewer-card {
+            background: rgba(6, 5, 14, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tree-header {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tree-pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            line-height: 1.5;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Cards Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .cards-grid-2col {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Skills view */
+        .skill-card-detailed {
+            background: rgba(9, 8, 20, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.8rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .skill-card-detailed:hover {
+            transform: translateY(-3px);
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.05);
+        }
+
+        .skill-card-detailed h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-progress-bar-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .skill-progress-bar-thumb {
+            height: 100%;
+            background: var(--accent-gradient);
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+
+        .skill-rationale-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Stated Outcomes cards */
+        .outcome-audit-card {
+            background: rgba(9, 8, 20, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .outcome-audit-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .outcome-audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .outcome-title-text {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #fff;
+        }
+
+        .badge-status {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-status.met { background-color: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
+        .badge-status.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25); }
+        .badge-status.not_met { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
+        .badge-status.not_verifiable { background-color: rgba(107, 114, 128, 0.1); color: var(--text-secondary); border: 1px solid rgba(107, 114, 128, 0.25); }
+
+        .outcome-audit-body {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.2rem;
+        }
+
+        @media (min-width: 768px) {
+            .outcome-audit-body {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .audit-info-block label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+
+        .audit-info-block p {
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+
+        /* Strengths & Improvement list items */
+        .list-card-premium {
+            background: rgba(9, 8, 20, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.8rem;
+        }
+
+        .list-card-premium h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .list-card-premium.strengths h3 { color: var(--success); }
+        .list-card-premium.gaps h3 { color: var(--warning); }
+
+        .premium-bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .premium-bullet-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            font-size: 0.98rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .premium-bullet-list li::before {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .strengths .premium-bullet-list li::before {
+            content: "✓";
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .gaps .premium-bullet-list li::before {
+            content: "!";
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        /* Interview Questions items */
+        .skill-group-box {
+            background: rgba(9, 8, 20, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .skill-group-header {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 1.2rem 1.8rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .question-item-card {
+            padding: 1.8rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+
+        .question-item-card:last-child {
+            border-bottom: none;
+        }
+
+        .question-item-card:hover {
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .question-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .badge-focus {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.7rem;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-focus.conceptual { background-color: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-focus.codebase_specific { background-color: rgba(59, 130, 246, 0.1); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+        .question-text-field {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+        }
+
+        .points-box-tag-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .points-tags-flex {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .points-tag {
+            background: rgba(139, 92, 246, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        /* Developer JSON pane */
+        .json-viewer-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .json-controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-copy-json {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: #c084fc;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy-json:hover {
+            background: rgba(139, 92, 246, 0.25);
+            color: #fff;
+        }
+
+        .json-pre-block {
+            background-color: #05040a;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .json-code-block {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #34d399;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Metadata Metrics design */
+        .metrics-grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+        }
+
+        @media (min-width: 768px) {
+            .metrics-grid-dashboard {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .metric-cell {
+            background: rgba(6, 5, 14, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.2s ease;
+        }
+
+        .metric-cell:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .metric-cell label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-cell span {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <div class="logo-badge">FASTAPI + GROQ LPU</div>
+            <h1>ProjectIQ</h1>
+            <p>AI-Powered Project Submission Analyzer & Auditor</p>
+        </header>
+
+        <!-- Dynamic submit form panel -->
+        <div class="glass-card">
+            <div class="card-header-main">
+                <span>📁</span> Upload & Analyze Your Project
+            </div>
+            
+            <form id="analyzer-form">
+                <div class="form-grid">
+                    <div class="input-wrapper">
+                        <label for="project_title">Project Name</label>
+                        <input type="text" id="project_title" name="project_title" class="custom-input" placeholder="e.g. Relo" required>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <label for="project_description">Project Summary (Optional)</label>
+                        <textarea id="project_description" name="project_description" class="custom-input" placeholder="Briefly describe what this project is about..."></textarea>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <label for="project_outcomes">What does the project do? (One goal per line)</label>
+                        <textarea id="project_outcomes" name="project_outcomes" class="custom-input" placeholder="e.g. recommendation of the nearby homes&#10;Create a database connection" required></textarea>
+                    </div>
+
+                    <div class="form-grid-2col">
+                        <div class="input-wrapper">
+                            <label for="questions_per_skill">Interview Questions per Skill</label>
+                            <input type="number" id="questions_per_skill" name="questions_per_skill" class="custom-input" min="1" max="10" value="2">
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label>Choose ZIP File</label>
+                            <div class="drag-zone" id="drop-zone">
+                                <input type="file" id="zip_file" name="zip_file" accept=".zip" required>
+                                <div class="drag-icon-glow">📥</div>
+                                <p>Drag & drop ZIP here or <span>browse files</span></p>
+                                <div class="file-pill" id="file-name"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="glowing-btn" id="submit-btn">
+                    <div class="spinner" id="btn-spinner"></div>
+                    <span id="btn-text">Analyze My Project</span>
+                </button>
+            </form>
+
+            <!-- Loading Stepper UI -->
+            <div class="loader-container" id="loader-panel">
+                <div class="stepper">
+                    <div class="step-item" id="step-1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Validating ZIP File & Auditing Security</div>
+                    </div>
+                    <div class="step-item" id="step-2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Extracting Codebase & Resolving Tree</div>
+                    </div>
+                    <div class="step-item" id="step-3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Scanning Imports & Programmatic Skills Detection</div>
+                    </div>
+                    <div class="step-item" id="step-4">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">AI Outcome Verification & Code Evidence Extraction</div>
+                    </div>
+                    <div class="step-item" id="step-5">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Generating Conceptual & Codebase Questions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Super Dashboard Results Area (Hidden by default) -->
+        <div id="results-dashboard">
+            
+            <!-- Top Dashboard Stats -->
+            <div class="dashboard-top-grid">
+                <div class="overview-details-box">
+                    <h2 class="overview-title" id="result-title">Project Title</h2>
+                    <p class="overview-desc" id="result-meta-subtitle">Project Submission Audit Report</p>
+                    
+                    <div class="narrative-quote-box" id="narrative-text">
+                        Narrative text summary will go here...
+                    </div>
+                </div>
+                
+                <div class="glowing-gauge-card">
+                    <div class="gauge-svg-container">
+                        <svg class="gauge-svg-ring" viewBox="0 0 140 140">
+                            <circle class="gauge-ring-bg" cx="70" cy="70" r="60"></circle>
+                            <circle class="gauge-ring-fill" id="gauge-fill-ring" cx="70" cy="70" r="60"></circle>
+                        </svg>
+                        <div class="gauge-ring-value-text" id="gauge-percent-text">0%</div>
+                    </div>
+                    <div>
+                        <div class="badge-align" id="alignment-badge-status">Strong</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-top: 0.4rem; letter-spacing: 0.05em;">Stated Alignment Score</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Buttons Navigation -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-overview')">Overview & Structure</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-skills')">Detected Skills</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-outcomes')">Outcomes Verification</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-questions')">Interview Questions</button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-json')">Developer JSON</button>
+            </div>
+
+            <!-- Tab 1: Overview & Structure -->
+            <div class="tab-panel active" id="tab-overview">
+                
+                <!-- Codebase File Tree -->
+                <div class="tree-viewer-card">
+                    <div class="tree-header">📁 Codebase File Tree</div>
+                    <pre class="tree-pre"><code id="codebase-tree">No tree directory computed.</code></pre>
+                </div>
+
+                <div class="cards-grid cards-grid-2col">
+                    <!-- Strengths -->
+                    <div class="list-card-premium strengths">
+                        <h3><span>✓</span> Codebase Strengths</h3>
+                        <ul class="premium-bullet-list" id="strengths-bullet-list">
+                            <!-- Injected strengths -->
+                        </ul>
+                    </div>
+
+                    <!-- Gaps -->
+                    <div class="list-card-premium gaps">
+                        <h3><span>!</span> Gaps & Improvements</h3>
+                        <ul class="premium-bullet-list" id="gaps-bullet-list">
+                            <!-- Injected gaps -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Metadata details -->
+                <div class="glass-card" style="padding: 1.8rem; margin-top: 2rem;">
+                    <div class="card-header-main" style="font-size: 1.2rem; margin-bottom: 1.2rem; border-bottom: none; padding-bottom: 0;">
+                        <span>⚡</span> Pipeline Metrics
+                    </div>
+                    <div class="metrics-grid-dashboard">
+                        <div class="metric-cell">
+                            <label>Files Scanned</label>
+                            <span id="metric-scanned-files">0</span>
+                        </div>
+                        <div class="metric-cell">
+                            <label>Extraction Latency</label>
+                            <span id="metric-zip-time">0 ms</span>
+                        </div>
+                        <div class="metric-cell">
+                            <label>LLM Tokens Used</label>
+                            <span id="metric-tokens-sum">0</span>
+                        </div>
+                        <div class="metric-cell">
+                            <label>Analysis Latency</label>
+                            <span id="metric-total-duration">0 ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Detected Skills -->
+            <div class="tab-panel" id="tab-skills">
+                <div class="cards-grid cards-grid-2col" id="detailed-skills-grid">
+                    <!-- Injected detailed skills -->
+                </div>
+            </div>
+
+            <!-- Tab 3: Outcomes Verification -->
+            <div class="tab-panel" id="tab-outcomes">
+                <div id="detailed-outcomes-area">
+                    <!-- Injected detailed outcomes -->
+                </div>
+            </div>
+
+            <!-- Tab 4: Interview Questions -->
+            <div class="tab-panel" id="tab-questions">
+                <div id="detailed-questions-area">
+                    <!-- Injected detailed questions -->
+                </div>
+            </div>
+
+            <!-- Tab 5: Developer JSON -->
+            <div class="tab-panel" id="tab-json">
+                <div class="json-viewer-container">
+                    <div class="json-controls-bar">
+                        <span style="font-size: 0.9rem; color: var(--text-secondary);">Raw JSON response payload from `/analyze-submission` endpoint:</span>
+                        <button class="btn-copy-json" onclick="copyRawJson()">Copy Payload</button>
+                    </div>
+                    <div class="json-pre-block">
+                        <pre><code class="json-code-block" id="json-raw-payload"></code></pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('zip_file');
+        const dropZone = document.getElementById('drop-zone');
+        const fileNameDisplay = document.getElementById('file-name');
+        const form = document.getElementById('analyzer-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const btnText = document.getElementById('btn-text');
+        
+        const loaderPanel = document.getElementById('loader-panel');
+        const resultsDashboard = document.getElementById('results-dashboard');
+
+        // File Selection view logic
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = `📦 ZIP: ${fileInput.files[0].name}`;
+                fileNameDisplay.style.display = 'flex';
+            } else {
+                fileNameDisplay.style.display = 'none';
+            }
+        });
+
+        // Dragover animations
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].name.endsWith('.zip')) {
+                fileInput.files = files;
+                fileNameDisplay.textContent = `📦 ZIP: ${files[0].name}`;
+                fileNameDisplay.style.display = 'flex';
+            } else if (files.length > 0) {
+                alert("Only valid ZIP archives are supported!");
+            }
+        });
+
+        // Tab switcher logic
+        function switchTab(event, tabId) {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => panel.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Stepper loading simulation
+        let loaderInterval;
+        function runLoadingAnimation() {
+            const steps = [
+                document.getElementById('step-1'),
+                document.getElementById('step-2'),
+                document.getElementById('step-3'),
+                document.getElementById('step-4'),
+                document.getElementById('step-5')
+            ];
+            
+            // Reset steps
+            steps.forEach(step => {
+                step.className = 'step-item';
+            });
+            
+            let activeIdx = 0;
+            steps[0].classList.add('active');
+            
+            loaderInterval = setInterval(() => {
+                if (activeIdx < steps.length - 1) {
+                    steps[activeIdx].classList.remove('active');
+                    steps[activeIdx].classList.add('completed');
+                    
+                    activeIdx++;
+                    steps[activeIdx].classList.add('active');
+                }
+            }, 2500);
+        }
+
+        function stopLoadingAnimation() {
+            clearInterval(loaderInterval);
+            const steps = [
+                document.getElementById('step-1'),
+                document.getElementById('step-2'),
+                document.getElementById('step-3'),
+                document.getElementById('step-4'),
+                document.getElementById('step-5')
+            ];
+            steps.forEach(step => {
+                step.className = 'step-item completed';
+            });
+        }
+
+        // Handle submissions
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Setup loading state
+            submitBtn.disabled = true;
+            btnSpinner.style.display = 'block';
+            btnText.textContent = 'Analyzing... Please wait';
+            loaderPanel.style.display = 'block';
+            resultsDashboard.style.display = 'none';
+
+            runLoadingAnimation();
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/analyze-submission', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || "Server analysis error.");
+                }
+
+                const data = await response.json();
+                renderReport(data);
+            } catch (err) {
+                alert(`Analysis Failed: ${err.message}`);
+                submitBtn.disabled = false;
+                btnSpinner.style.display = 'none';
+                btnText.textContent = 'Analyze My Project';
+                loaderPanel.style.display = 'none';
+            } finally {
+                clearInterval(loaderInterval);
+            }
+        });
+
+        // Copy raw JSON responses
+        function copyRawJson() {
+            const rawJson = document.getElementById('json-raw-payload').textContent;
+            navigator.clipboard.writeText(rawJson).then(() => {
+                alert("JSON response copied to clipboard!");
+            }).catch(err => {
+                alert("Error copying JSON: " + err);
+            });
+        }
+
+        // Render dashboard details
+        function renderReport(data) {
+            stopLoadingAnimation();
+
+            // Populate Overview Details
+            document.getElementById('result-title').textContent = data.project_title;
+            document.getElementById('narrative-text').textContent = data.evaluation_report.summary.narrative;
+            
+            // Render tree
+            const treeCode = document.getElementById('codebase-tree');
+            // If tree response is in metadata or we extract it
+            treeCode.textContent = "ZIP File Root Structure:\n" + (data.suggested_skills.length > 0 ? "Analyzed " + data.metadata.files_analyzed + " files successfully.\n\n" : "") + "Files matching catalog patterns found.";
+
+            // Alignment score dial logic
+            const scorePercent = Math.round(data.evaluation_report.summary.alignment_score * 100);
+            document.getElementById('gauge-percent-text').textContent = `${scorePercent}%`;
+            
+            const fillRing = document.getElementById('gauge-fill-ring');
+            const circumference = 377; // 2 * pi * r (60)
+            const offset = circumference - (circumference * (scorePercent / 100));
+            fillRing.style.strokeDashoffset = offset;
+
+            const badgeStatus = document.getElementById('alignment-badge-status');
+            badgeStatus.textContent = data.evaluation_report.summary.overall_alignment;
+            badgeStatus.className = 'badge-align ' + data.evaluation_report.summary.overall_alignment;
+
+            // Gauge coloration
+            if (data.evaluation_report.summary.overall_alignment === 'strong') {
+                fillRing.style.stroke = 'var(--success)';
+                fillRing.style.filter = 'drop-shadow(0 0 5px rgba(16, 185, 129, 0.4))';
+            } else if (data.evaluation_report.summary.overall_alignment === 'partial') {
+                fillRing.style.stroke = 'var(--warning)';
+                fillRing.style.filter = 'drop-shadow(0 0 5px rgba(245, 158, 11, 0.4))';
+            } else {
+                fillRing.style.stroke = 'var(--danger)';
+                fillRing.style.filter = 'drop-shadow(0 0 5px rgba(239, 68, 68, 0.4))';
+            }
+
+            // Strengths list
+            const strengthsUl = document.getElementById('strengths-bullet-list');
+            strengthsUl.innerHTML = '';
+            data.evaluation_report.strengths.forEach(str => {
+                strengthsUl.innerHTML += `<li>${str}</li>`;
+            });
+
+            // Gaps list
+            const gapsUl = document.getElementById('gaps-bullet-list');
+            gapsUl.innerHTML = '';
+            data.evaluation_report.gaps.forEach(gap => {
+                gapsUl.innerHTML += `<li>${gap}</li>`;
+            });
+
+            // Metrics cells
+            document.getElementById('metric-scanned-files').textContent = data.metadata.files_analyzed;
+            document.getElementById('metric-zip-time').textContent = `${data.metadata.extraction_time_ms} ms`;
+            document.getElementById('metric-tokens-sum').textContent = data.metadata.model_tokens_used;
+            document.getElementById('metric-total-duration').textContent = `${data.processing_time_ms} ms`;
+
+            // Render Skills cards (Tab 2)
+            const skillsGrid = document.getElementById('detailed-skills-grid');
+            skillsGrid.innerHTML = '';
+            if (data.suggested_skills.length === 0) {
+                skillsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-secondary);">No skills matches detected in codebase files.</div>';
+            } else {
+                data.suggested_skills.forEach(skill => {
+                    const pct = Math.round(skill.confidence * 100);
+                    skillsGrid.innerHTML += `
+                        <div class="skill-card-detailed">
+                            <h4>
+                                <span>${skill.skill_name}</span>
+                                <span style="font-size: 0.9rem; color: var(--accent-primary);">${pct}% confidence</span>
+                            </h4>
+                            <div class="skill-progress-bar-track">
+                                <div class="skill-progress-bar-thumb" style="width: ${pct}%"></div>
+                            </div>
+                            <p class="skill-rationale-text">${skill.rationale}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            // Render Stated Outcomes cards (Tab 3)
+            const outcomesArea = document.getElementById('detailed-outcomes-area');
+            outcomesArea.innerHTML = '';
+            data.evaluation_report.outcome_evaluation.forEach(outcome => {
+                outcomesArea.innerHTML += `
+                    <div class="outcome-audit-card">
+                        <div class="outcome-audit-header">
+                            <span class="outcome-title-text">${outcome.stated_outcome}</span>
+                            <span class="badge-status ${outcome.status}">${outcome.status.replace('_', ' ')}</span>
+                        </div>
+                        <div class="outcome-audit-body">
+                            <div class="audit-info-block">
+                                <label>Code Evidence</label>
+                                <p>${outcome.evidence || 'No verified code evidence in codebase.'}</p>
+                            </div>
+                            <div class="audit-info-block">
+                                <label>Identified Gap</label>
+                                <p>${outcome.gap || 'None.'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Render Interview Questions (Tab 4)
+            const questionsArea = document.getElementById('detailed-questions-area');
+            questionsArea.innerHTML = '';
+            if (data.evaluation_report.skills.length === 0) {
+                questionsArea.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">No assessment questions available.</div>';
+            } else {
+                data.evaluation_report.skills.forEach(skillBlock => {
+                    let qCards = '';
+                    
+                    skillBlock.questions.forEach(q => {
+                        let tags = q.expected_key_points.map(pt => `<span class="points-tag">${pt}</span>`).join('');
+                        qCards += `
+                            <div class="question-item-card">
+                                <div class="question-top-row">
+                                    <span class="badge-focus ${q.question_focus}">${q.question_focus.replace('_', ' ')}</span>
+                                </div>
+                                <div class="question-text-field">${q.question_text}</div>
+                                <div class="points-box-tag-label">Expected Key Points</div>
+                                <div class="points-tags-flex">
+                                    ${tags || '<span style="color: var(--text-muted); font-size: 0.8rem;">No key points required.</span>'}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    questionsArea.innerHTML += `
+                        <div class="skill-group-box">
+                            <div class="skill-group-header">💡 ${skillBlock.skill_name} Assessment Questions</div>
+                            ${qCards}
+                        </div>
+                    `;
+                });
+            }
+
+            // Raw JSON response
+            document.getElementById('json-raw-payload').textContent = JSON.stringify(data, null, 2);
+
+            // Turn off loading states
+            submitBtn.disabled = false;
+            btnSpinner.style.display = 'none';
+            btnText.textContent = 'Analyze My Project';
+            loaderPanel.style.display = 'none';
+
+            // Show and scroll to Dashboard results
+            resultsDashboard.style.display = 'block';
+            resultsDashboard.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

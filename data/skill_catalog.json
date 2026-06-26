@@ -1,0 +1,62 @@
+[
+  {
+    "skill_id": "fastapi",
+    "skill_name": "FastAPI",
+    "file_patterns": [".*\\.py$"],
+    "imports": ["fastapi", "apirouter"],
+    "dependencies": ["fastapi"],
+    "frameworks": ["fastapi"],
+    "code_patterns": ["APIRouter", "FastAPI\\(", "@app\\.(get|post|put|delete|patch)\\("],
+    "description": "Python web framework for building APIs."
+  },
+  {
+    "skill_id": "springboot",
+    "skill_name": "Spring Boot",
+    "file_patterns": [".*\\.java$", "pom\\.xml", "build\\.gradle"],
+    "imports": ["org.springframework.boot", "org.springframework.web", "org.springframework.context"],
+    "dependencies": ["spring-boot-starter", "spring-boot-starter-web", "spring-boot"],
+    "frameworks": ["springboot", "spring"],
+    "code_patterns": ["@SpringBootApplication", "@RestController", "@GetMapping", "@PostMapping", "@Autowired"],
+    "description": "Java framework for building production-ready Spring applications."
+  },
+  {
+    "skill_id": "react",
+    "skill_name": "React",
+    "file_patterns": [".*\\.(js|jsx|ts|tsx)$", "package\\.json"],
+    "imports": ["react", "react-dom"],
+    "dependencies": ["react", "react-dom"],
+    "frameworks": ["react"],
+    "code_patterns": ["useState", "useEffect", "useContext", "ReactDOM", "import React", "createRoot"],
+    "description": "JavaScript/TypeScript library for building component-based user interfaces."
+  },
+  {
+    "skill_id": "docker",
+    "skill_name": "Docker",
+    "file_patterns": ["Dockerfile", "docker-compose\\.yml"],
+    "imports": [],
+    "dependencies": [],
+    "frameworks": [],
+    "code_patterns": ["FROM ", "RUN ", "CMD ", "ENTRYPOINT ", "ENV ", "EXPOSE ", "COPY ", "ADD ", "services:", "version:"],
+    "description": "Containerization platform to build, share, and run applications."
+  },
+  {
+    "skill_id": "django",
+    "skill_name": "Django",
+    "file_patterns": [".*\\.py$"],
+    "imports": ["django", "django.db", "django.urls", "django.http"],
+    "dependencies": ["django"],
+    "frameworks": ["django"],
+    "code_patterns": ["models.Model", "urlpatterns =", "views.APIView", "admin.site.register"],
+    "description": "High-level Python web framework that encourages rapid development and clean, pragmatic design."
+  },
+  {
+    "skill_id": "express",
+    "skill_name": "Express",
+    "file_patterns": [".*\\.(js|ts)$", "package\\.json"],
+    "imports": ["express"],
+    "dependencies": ["express"],
+    "frameworks": ["express"],
+    "code_patterns": ["express\\(\\)", "require\\('express'\\)", "router\\.(get|post|put|delete)\\("],
+    "description": "Fast, unopinionated, minimalist web framework for Node.js."
+  }
+]
