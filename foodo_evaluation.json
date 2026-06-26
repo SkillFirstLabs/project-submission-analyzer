@@ -1,0 +1,84 @@
+{
+  "project_name": "Foodo",
+  "file_count": 81,
+  "skills": {
+    "languages": {
+      "Python": 31.3,
+      "CSS": 11.9,
+      "HTML": 23.9,
+      "JavaScript": 9,
+      "TypeScript": 3,
+      "TypeScript/React": 20.9
+    },
+    "frameworks": [
+      "Django"
+    ],
+    "primary_language": "Python",
+    "all_skills": [
+      "Python",
+      "CSS",
+      "HTML",
+      "JavaScript",
+      "TypeScript",
+      "TypeScript/React",
+      "Django"
+    ]
+  },
+  "gemini": {
+    "demo_mode": true,
+    "description_vs_code": {
+      "claims": [
+        "Foodo \u2013 Smart College Canteen SystemTechnologies: Django, MySQL, JavaScript, HTML5, CSS3, BootstrapProject Description: Developed a full-stack digital canteen management and ordering platform aimed at minimizing campus dining queues and streamlining vendor workflows.Key Contributions & Features:Real-Time Order Tracking: Implemented an asynchronous order status lifecycle ($Pending \\rightarrow Preparing \\rightarrow Ready \\rightarrow Delivered$) allowing students to monitor their orders live from their devices.Dynamic Menu & Cart System: Built an intuitive front-end user interface using JavaScript to manage cart states, recalculate total amounts dynamically, and browse categories efficiently without full page reloads.Robust Database Architecture: Designed and optimized a relational MySQL schema featuring structured relationships between Users, Food Items, Orders, and Order Items to prevent transactional bottlenecks during peak rush hours.Admin Dashboard: Engineered a secure Django-based vendor panel enabling canteen staff to update item availability instantly and manage incoming order queues seamlessly."
+      ],
+      "found": [
+        "Discovered 81 files",
+        "Detected technologies: Python, JavaScript/TypeScript, HTML, CSS, Backend Framework, Database, JavaScript, TypeScript, TypeScript/React, Django"
+      ],
+      "mismatches": [],
+      "match_score": 73
+    },
+    "conceptual_questions": [
+      "How would you explain the role of Python in the architecture of this project?"
+    ],
+    "code_questions": [
+      "If this project needed to handle twice the current load, what would be the first performance or scalability improvement you would implement?"
+    ],
+    "evaluation": {
+      "score": 95,
+      "overall_score": 95,
+      "innovation_score": 95,
+      "technical_complexity": "High",
+      "code_quality": "Excellent",
+      "documentation_score": "Strong",
+      "ui_ux_score": "Strong",
+      "architecture_review": "Foodo appears to follow a practical, approachable architecture with a clear focus on Python, JavaScript/TypeScript, HTML, CSS, Backend Framework, Database, JavaScript, TypeScript, TypeScript/React, Django. The project structure and identified files suggest a foundation that is suitable for expansion, but additional modularization and documentation would make it easier to maintain and scale.",
+      "strengths": [
+        "The submission presents a clear objective around Foodo.",
+        "The project includes 81 discovered files and demonstrates a practical use of Python, JavaScript/TypeScript, HTML, CSS, Backend Framework, Database, JavaScript, TypeScript, TypeScript/React, Django.",
+        "The structure indicates thoughtful organization and a good foundation for iterative development."
+      ],
+      "weaknesses": [
+        "README documentation is missing or not clearly discoverable."
+      ],
+      "improvement_suggestions": [
+        "Add a concise README with setup steps, architecture notes, and known limitations.",
+        "Introduce clearer component boundaries and reusable modules for future growth.",
+        "Add lightweight tests for critical workflows to improve confidence and maintainability."
+      ],
+      "security_observations": [
+        "Sensitive configuration values should remain externalized from source files.",
+        "Input validation and error handling should be strengthened for production readiness.",
+        "Dependencies should be reviewed regularly for security updates."
+      ],
+      "scalability_analysis": "The current solution shows a solid base for incremental growth. If the project expands, introducing service boundaries, clear data flows, and automated testing will improve long-term maintainability and resilience.",
+      "project_summary": "Foodo is a promising submission that aligns well with the provided description: Foodo \u2013 Smart College Canteen SystemTechnologies: Django, MySQL, JavaScript, HTML5, CSS3, BootstrapProject Description: Developed a full-stack digital canteen management and ordering platform aimed at minimizing campus dining queues and streamlining vendor workflows.Key Contributions & Features:Real-Time Order Tracking: Implemented an asynchronous order status lifecycle ($Pending \\rightarrow Preparing \\rightarrow Ready \\rightarrow Delivered$) allowing students to monitor their orders live from their devices.Dynamic Menu & Cart System: Built an intuitive front-end user interface using JavaScript to manage cart states, recalculate total amounts dynamically, and browse categories efficiently without full page reloads.Robust Database Architecture: Designed and optimized a relational MySQL schema featuring structured relationships between Users, Food Items, Orders, and Order Items to prevent transactional bottlenecks during peak rush hours.Admin Dashboard: Engineered a secure Django-based vendor panel enabling canteen staff to update item availability instantly and manage incoming order queues seamlessly.. The discovered files, folder structure, and selected technologies suggest a project with meaningful potential and a credible implementation path.",
+      "verdict": "Foodo demonstrates solid initiative, a practical implementation approach, and a clear understanding of the chosen technology stack. With a bit more polish in documentation, testing, and architecture refinement, this project could become a strong showcase piece for the hackathon.",
+      "final_verdict": "Foodo demonstrates solid initiative, a practical implementation approach, and a clear understanding of the chosen technology stack. With a bit more polish in documentation, testing, and architecture refinement, this project could become a strong showcase piece for the hackathon."
+    }
+  },
+  "submitted_at": "2026-06-26T10:09:31.222Z",
+  "answers": {
+    "conceptual_question": "If this project needed to handle twice the current load, what would be the first performance or scalability improvement you would implement?If this project needed to handle twice the current load, what would be the first performance or scalability improvement you would implement?",
+    "coding_question": "from django.core.cache import cache\n\n# Fetch menu from cache; if missing, query MySQL and cache it for 15 minutes\nmenu = cache.get_or_set('canteen_menu', lambda: list(MenuItem.objects.all()), 900)"
+  }
+}
