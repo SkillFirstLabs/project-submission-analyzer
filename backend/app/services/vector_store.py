@@ -8,8 +8,8 @@ from app.services.embedding_service import get_embedding_model
 logger = logging.getLogger("project_analyzer")
 
 MAX_RETRIES = 8
-INITIAL_BACKOFF = 10  # seconds
-BATCH_DELAY = 4  # seconds between batches
+INITIAL_BACKOFF = 10  
+BATCH_DELAY = 4  
 
 def build_vector_store(chunks: List[dict]) -> FAISS:
     """
@@ -34,7 +34,7 @@ def build_vector_store(chunks: List[dict]) -> FAISS:
     total_docs = len(documents)
     logger.info(f"Starting embedding of {total_docs} documents")
     
-    # Use batch size of 20 with delays to stay within rate limits
+    
     batch_size = 20
     vector_store = None
     total_batches = (len(documents) + batch_size - 1) // batch_size

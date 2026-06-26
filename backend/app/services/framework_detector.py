@@ -114,14 +114,14 @@ def detect_frameworks(files: List[Dict[str, Any]], parsed_structures: List[Dict[
                 confidence = max(confidence, 0.9)
                 evidence.append(f"Found match for '{pattern}' in pom.xml")
                 
-        # Check imports using regex
+
         imports_found = 0
         for imp in all_imports:
             for pattern in rule["import_patterns"]:
                 if re.search(pattern, imp):
                     imports_found += 1
                     evidence.append(f"Found matching import pattern '{pattern}' in code")
-                    break  # Found a match for this import line, move to next import
+                    break  
                     
         if imports_found > 0:
             import_conf = min(0.3 + (imports_found * 0.2), 0.95)

@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings:
-    GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
-    GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     COHERE_API_KEY: str = os.getenv("COHERE_API_KEY", "")
 
     FAISS_INDEX_PATH: str = "faiss_index"

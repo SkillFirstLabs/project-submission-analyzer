@@ -27,7 +27,8 @@ def llm_generate(system_instruction: str, user_prompt: str, temperature: float =
             {"role": "system", "content": system_instruction},
             {"role": "user", "content": user_prompt}
         ],
-        "temperature": temperature
+        "temperature": temperature,
+        "max_tokens": 3000
     }
     
     response = requests.post(url, headers=headers, json=payload, timeout=180)

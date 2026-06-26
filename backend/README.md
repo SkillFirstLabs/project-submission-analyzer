@@ -165,3 +165,60 @@ curl -X POST "http://127.0.0.1:5000/analyze-submission" \
   }
 }
 ```
+
+---
+
+## 🏗️ Execution Pipeline & Architecture
+
+The backend operates as a structured evaluation pipeline using static analysis and LLM semantic auditing:
+
+```mermaid
+graph TD
+    subgraph 1. Processing & Static Parsing
+        A[POST /analyze-submission] --> B[Zip Extraction & Security Sanitization]
+        B --> C[File Scanner & Extension Filtering]
+        C --> D[Language Detector: LOC calculation]
+        C --> E[Framework Detector: Regex Import parsing]
+    end
+
+    subgraph 2. Indexing & Vector Search
+        C --> F[Chunk Service: Code Text Splitting]
+        F --> G[Vector Store: Embeddings via Cohere]
+        G --> H[FAISS Vector Index creation]
+        H --> I[Retrieval Service: Semantic Code Retrieval]
+    end
+
+    subgraph 3. LLM Audit & Generation
+        I --> J[Skill Service: Taxonomy Catalog Mapping]
+        J --> K[Interview Service: Customized Q&A Generation]
+        I --> L[Summary Service: Strengths/Gaps Narrative Audit]
+    end
+
+    subgraph 4. Aggregation
+        E & D & J & K & L --> M[Report Builder: Format JSON Schema]
+        M --> N[Response sent to Frontend Dashboard]
+    end
+
+    style A fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    style J fill:#6366f1,stroke:#4f46e5,color:#fff
+    style K fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style N fill:#10b981,stroke:#059669,color:#fff
+```
+
+### Core Architecture & Modules:
+
+1. **Request Entry & Verification** ([analyze.py](file:///home/bart-simpson/Code/INTERN/backend/app/api/routes/analyze.py)): Coordinates request inputs, temporary working directories, service invocations, final payload construction, and directory cleanup.
+2. **Safe ZIP Processing** ([zip_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/zip_service.py)): Prevents **Zip Slip vulnerability** by verifying targets reside strictly within the temporary directory boundaries.
+3. **Static Syntax Analysis**:
+   - **Language Detector** ([language_detector.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/language_detector.py)): Excludes configuration formats and counts Lines of Code (LOC) for code files.
+   - **Framework Detector** ([framework_detector.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/framework_detector.py)): Parses imports and dependencies using custom regex lists.
+   - **Language Parser** ([parser_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/parser_service.py)): Extracts definitions of classes, functions, and API endpoints.
+4. **Vector Embeddings & Semantic Search**:
+   - **Chunk Service** ([chunk_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/chunk_service.py)): Overlaps file structures for LLM readiness.
+   - **FAISS Vector Store** ([vector_store.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/vector_store.py)): Computes semantic representations via Cohere and manages rate-limits with backoff logic.
+   - **Retrieval Service** ([retrieval_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/retrieval_service.py)): Queries context chunks mapping to general architectural attributes.
+5. **LLM Orchestrators (Gemini API)**:
+   - **Taxonomy Skill Mounter** ([skill_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/skill_service.py)): Maps files back to [skill_catalog.json](file:///home/bart-simpson/Code/INTERN/backend/app/models/skill_catalog.json). Leverages dynamic fallbacks to programming languages (e.g., Rust, Go) if no database/framework matches.
+   - **Custom Interview Generator** ([interview_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/interview_service.py)): Builds codebase-specific and conceptual interview checks.
+   - **Executive Auditor** ([summary_service.py](file:///home/bart-simpson/Code/INTERN/backend/app/services/summary_service.py)): Audits structure strengths and development gaps.
+

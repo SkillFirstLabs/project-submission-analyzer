@@ -280,5 +280,59 @@
     "skill_name": "Google Cloud",
     "category": "Cloud Platform",
     "description": "Deploying apps, containers, and data warehousing pipelines on Google Cloud Platform."
+  },
+  {
+    "skill_id": "sk-070",
+    "skill_name": "Rust",
+    "category": "Programming Language",
+    "description": "Systems programming, concurrency, memory safety, and tooling in Rust."
+  },
+  {
+    "skill_id": "sk-071",
+    "skill_name": "Go",
+    "category": "Programming Language",
+    "description": "Systems and backend programming using Go (Golang), including goroutines and channels."
+  },
+  {
+    "skill_id": "sk-072",
+    "skill_name": "Python",
+    "category": "Programming Language",
+    "description": "General purpose software development, scripting, data manipulation, or web backend in Python."
+  },
+  {
+    "skill_id": "sk-073",
+    "skill_name": "JavaScript",
+    "category": "Programming Language",
+    "description": "Core JavaScript programming, DOM manipulation, asynchronous programming, or ES6+ features."
+  },
+  {
+    "skill_id": "sk-074",
+    "skill_name": "TypeScript",
+    "category": "Programming Language",
+    "description": "Developing robust applications using TypeScript type definitions and interfaces."
+  },
+  {
+    "skill_id": "sk-075",
+    "skill_name": "Java",
+    "category": "Programming Language",
+    "description": "Object-oriented programming, design patterns, and JVM applications using Java."
+  },
+  {
+    "skill_id": "sk-076",
+    "skill_name": "C++",
+    "category": "Programming Language",
+    "description": "Systems programming, standard library usage, manual memory management, and performance tuning in C++."
+  },
+  {
+    "skill_id": "sk-077",
+    "skill_name": "C",
+    "category": "Programming Language",
+    "description": "Procedural programming, memory layouts, pointers, and systems development in C."
+  },
+  {
+    "skill_id": "sk-078",
+    "skill_name": "Compiler & Interpreter Design",
+    "category": "Computer Science",
+    "description": "Building custom programming languages, including lexers, parsers, abstract syntax trees (AST), symbol tables, evaluators, or code generators."
   }
 ]

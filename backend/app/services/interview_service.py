@@ -12,7 +12,11 @@ def generate_interview_questions(skills: list, context: str, questions_per_skill
     if not skills:
         return {"skills": []}
         
-    skills_str = json.dumps(skills, indent=2)
+    # Sort skills by confidence descending and take the top 5
+    sorted_skills = sorted(skills, key=lambda x: x.get("confidence", 0.0), reverse=True)
+    top_skills = sorted_skills[:5]
+    
+    skills_str = json.dumps(top_skills, indent=2)
     prompt = INTERVIEW_USER_PROMPT_TEMPLATE.format(skills=skills_str, context=context, questions_per_skill=questions_per_skill)
     
     raw_text = llm_generate(
