@@ -1,0 +1,67 @@
+[
+  {
+    "skill_name": "FastAPI",
+    "category": "Backend Framework",
+    "description": "Building APIs with FastAPI framework in Python."
+  },
+  {
+    "skill_name": "Flask",
+    "category": "Backend Framework",
+    "description": "Building APIs with Flask framework in Python."
+  },
+  {
+    "skill_name": "Django",
+    "category": "Backend Framework",
+    "description": "Building web apps with Django framework in Python."
+  },
+  {
+    "skill_name": "Express.js",
+    "category": "Backend Framework",
+    "description": "Building backend APIs using Express in Node.js."
+  },
+  {
+    "skill_name": "Spring Boot",
+    "category": "Backend Framework",
+    "description": "Building backend applications using Spring Boot in Java."
+  },
+  {
+    "skill_name": "React",
+    "category": "Frontend Framework",
+    "description": "Building interactive user interfaces using React."
+  },
+  {
+    "skill_name": "Next.js",
+    "category": "Frontend Framework",
+    "description": "Building server-rendered React applications using Next.js."
+  },
+  {
+    "skill_name": "JWT Authentication",
+    "category": "Security",
+    "description": "Implementing JSON Web Token based user authentication and authorization."
+  },
+  {
+    "skill_name": "REST API Design",
+    "category": "API",
+    "description": "Designing clean, standard RESTful endpoints."
+  },
+  {
+    "skill_name": "SQL Database Design",
+    "category": "Database",
+    "description": "Writing SQL schemas, database migrations, and queries."
+  },
+  {
+    "skill_name": "MongoDB",
+    "category": "Database",
+    "description": "Integrating and querying MongoDB databases."
+  },
+  {
+    "skill_name": "Docker",
+    "category": "DevOps",
+    "description": "Containerizing applications using Dockerfiles and Docker Compose."
+  },
+  {
+    "skill_name": "Pytest",
+    "category": "Testing",
+    "description": "Writing automated tests with Pytest."
+  }
+]
