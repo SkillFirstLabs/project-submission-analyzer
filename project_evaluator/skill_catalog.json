@@ -1,0 +1,60 @@
+[
+  { "skill_id": "sk-001", "skill_name": "Python", "category": "Programming Language" },
+  { "skill_id": "sk-002", "skill_name": "Java", "category": "Programming Language" },
+  { "skill_id": "sk-003", "skill_name": "JavaScript", "category": "Programming Language" },
+  { "skill_id": "sk-004", "skill_name": "TypeScript", "category": "Programming Language" },
+  { "skill_id": "sk-005", "skill_name": "C++", "category": "Programming Language" },
+  { "skill_id": "sk-006", "skill_name": "C#", "category": "Programming Language" },
+  { "skill_id": "sk-007", "skill_name": "Go", "category": "Programming Language" },
+  { "skill_id": "sk-008", "skill_name": "Kotlin", "category": "Programming Language" },
+
+  { "skill_id": "sk-009", "skill_name": "React", "category": "Frontend" },
+  { "skill_id": "sk-010", "skill_name": "Angular", "category": "Frontend" },
+  { "skill_id": "sk-011", "skill_name": "Vue.js", "category": "Frontend" },
+  { "skill_id": "sk-012", "skill_name": "Next.js", "category": "Frontend" },
+  { "skill_id": "sk-013", "skill_name": "HTML/CSS", "category": "Frontend" },
+  { "skill_id": "sk-014", "skill_name": "Tailwind CSS", "category": "Frontend" },
+  { "skill_id": "sk-015", "skill_name": "Responsive Web Design", "category": "Frontend" },
+
+  { "skill_id": "sk-016", "skill_name": "Node.js", "category": "Backend" },
+  { "skill_id": "sk-017", "skill_name": "Express.js", "category": "Backend" },
+  { "skill_id": "sk-018", "skill_name": "FastAPI", "category": "Backend" },
+  { "skill_id": "sk-019", "skill_name": "Django", "category": "Backend" },
+  { "skill_id": "sk-020", "skill_name": "Flask", "category": "Backend" },
+  { "skill_id": "sk-021", "skill_name": "Spring Boot", "category": "Backend" },
+  { "skill_id": "sk-022", "skill_name": "REST API Design", "category": "Backend" },
+  { "skill_id": "sk-023", "skill_name": "GraphQL", "category": "Backend" },
+
+  { "skill_id": "sk-024", "skill_name": "PostgreSQL", "category": "Database" },
+  { "skill_id": "sk-025", "skill_name": "MySQL", "category": "Database" },
+  { "skill_id": "sk-026", "skill_name": "MongoDB", "category": "Database" },
+  { "skill_id": "sk-027", "skill_name": "Redis", "category": "Database" },
+  { "skill_id": "sk-028", "skill_name": "SQLite", "category": "Database" },
+  { "skill_id": "sk-029", "skill_name": "SQL", "category": "Database" },
+
+  { "skill_id": "sk-030", "skill_name": "AWS", "category": "Cloud" },
+  { "skill_id": "sk-031", "skill_name": "Microsoft Azure", "category": "Cloud" },
+  { "skill_id": "sk-032", "skill_name": "Google Cloud Platform", "category": "Cloud" },
+  { "skill_id": "sk-033", "skill_name": "Firebase", "category": "Cloud" },
+
+  { "skill_id": "sk-034", "skill_name": "Docker", "category": "DevOps" },
+  { "skill_id": "sk-035", "skill_name": "Kubernetes", "category": "DevOps" },
+  { "skill_id": "sk-036", "skill_name": "CI/CD", "category": "DevOps" },
+  { "skill_id": "sk-037", "skill_name": "Git", "category": "DevOps" },
+  { "skill_id": "sk-038", "skill_name": "Linux", "category": "DevOps" },
+  { "skill_id": "sk-039", "skill_name": "Terraform", "category": "DevOps" },
+  { "skill_id": "sk-040", "skill_name": "Nginx", "category": "DevOps" },
+
+  { "skill_id": "sk-041", "skill_name": "Machine Learning", "category": "Data & AI" },
+  { "skill_id": "sk-042", "skill_name": "Data Analysis", "category": "Data & AI" },
+  { "skill_id": "sk-043", "skill_name": "Pandas", "category": "Data & AI" },
+  { "skill_id": "sk-044", "skill_name": "NumPy", "category": "Data & AI" },
+  { "skill_id": "sk-045", "skill_name": "TensorFlow", "category": "Data & AI" },
+  { "skill_id": "sk-046", "skill_name": "PyTorch", "category": "Data & AI" },
+
+  { "skill_id": "sk-047", "skill_name": "React Native", "category": "Mobile" },
+  { "skill_id": "sk-048", "skill_name": "Flutter", "category": "Mobile" },
+  { "skill_id": "sk-049", "skill_name": "Android Development", "category": "Mobile" },
+
+  { "skill_id": "sk-050", "skill_name": "Cybersecurity", "category": "Security" }
+]
