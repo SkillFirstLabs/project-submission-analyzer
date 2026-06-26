@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AI Project Submission Analyzer (AIPSA)
 
 A pixel-perfect diagnostic engine for evaluating developer capabilities and project authenticity based on the Stitch UI/UX design.
@@ -30,3 +31,6 @@ A pixel-perfect diagnostic engine for evaluating developer capabilities and proj
    npm run dev
    ```
 3. Open `http://localhost:3000` in your web browser.
+=======
+# project-submission-analyzer
+>>>>>>> 29ddc14fdeb48eaa97ac1912e7e6ce8f9c75e4f8
