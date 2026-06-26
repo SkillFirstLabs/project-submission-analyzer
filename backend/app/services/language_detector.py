@@ -54,14 +54,21 @@ EXTENSION_MAP = {
 def detect_languages(files: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Calculates LOC per language and percentage.
+    Excludes non-programming/non-markup/configuration/documentation files from coding language statistics.
     """
     loc_by_lang = {}
     total_loc = 0
+    
+    # Exclude data, config, and prose formats from coding language stats to prevent distortion
+    EXCLUDED_LANGUAGES = {"JSON", "YAML", "TOML", "XML", "Markdown", "Text", "Unknown"}
     
     for f in files:
         ext = f.get("extension", "").lower()
         lang = EXTENSION_MAP.get(ext, "Unknown")
         
+        if lang in EXCLUDED_LANGUAGES:
+            continue
+            
         content = f.get("content", "")
         lines = content.split("\n")
         loc = len([line for line in lines if line.strip()])
@@ -73,7 +80,7 @@ def detect_languages(files: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         total_loc += loc
         
     if total_loc == 0:
-        total_loc = 1
+        return []
         
     language_analysis = []
     for lang, loc in loc_by_lang.items():

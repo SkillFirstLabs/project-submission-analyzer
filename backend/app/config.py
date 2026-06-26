@@ -7,8 +7,7 @@ class Settings:
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     COHERE_API_KEY: str = os.getenv("COHERE_API_KEY", "")
-    
-    # FAISS config
+
     FAISS_INDEX_PATH: str = "faiss_index"
     
     # Upload limits (50MB)
@@ -43,6 +42,12 @@ class Settings:
     SKIP_DIRS: set = {
         "node_modules", ".git", "dist", "build", "__pycache__",
         "venv", ".env", "env", "target", "vendor", ".next",
+    }
+    
+    SKIP_FILES: set = {
+        "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb",
+        "composer.lock", "cargo.lock", "poetry.lock", "gemfile.lock", "go.sum",
+        "pipfile.lock",
     }
 
 settings = Settings()

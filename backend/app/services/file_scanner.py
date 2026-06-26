@@ -15,11 +15,14 @@ def scan_project(temp_dir: str) -> List[Dict]:
         dirs[:] = [d for d in dirs if d.lower() not in settings.SKIP_DIRS]
         
         for filename in filenames:
+            name_lower = filename.lower()
+            if name_lower in settings.SKIP_FILES:
+                continue
+                
             full_path = os.path.join(root, filename)
             relative_path = os.path.relpath(full_path, temp_dir)
             
             ext = os.path.splitext(filename)[1].lower()
-            name_lower = filename.lower()
             
             # Filter checks
             is_supported = ext in settings.SUPPORTED_EXTENSIONS
