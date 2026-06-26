@@ -22,7 +22,7 @@ FRAMEWORKS = {
             r'\brequire\([\'"]react(-dom)?[\'"]\)'
         ],
     },
-    "Express": {
+    "Express.js": {
         "identifiers": [r'"express"\s*:'],
         "import_patterns": [
             r'\bimport\s+express\b',
@@ -45,6 +45,26 @@ FRAMEWORKS = {
     "Flutter": {
         "identifiers": [r'\bflutter\b', r'sdk:\s*flutter'],
         "import_patterns": [r'\bpackage:flutter/'],
+    },
+    "TensorFlow": {
+        "identifiers": [r'\btensorflow\b'],
+        "import_patterns": [r'\bimport\s+tensorflow\b', r'\bfrom\s+tensorflow\b'],
+    },
+    "PyTorch": {
+        "identifiers": [r'\btorch\b', r'\bpytorch\b'],
+        "import_patterns": [r'\bimport\s+torch\b', r'\bfrom\s+torch\b'],
+    },
+    "Scikit-Learn": {
+        "identifiers": [r'\bscikit-learn\b', r'\bsklearn\b'],
+        "import_patterns": [r'\bimport\s+sklearn\b', r'\bfrom\s+sklearn\b'],
+    },
+    "Pandas": {
+        "identifiers": [r'\bpandas\b'],
+        "import_patterns": [r'\bimport\s+pandas\b', r'\bfrom\s+pandas\b'],
+    },
+    "NumPy": {
+        "identifiers": [r'\bnumpy\b'],
+        "import_patterns": [r'\bimport\s+numpy\b', r'\bfrom\s+numpy\b'],
     }
 }
 

@@ -106,6 +106,10 @@ function resetApplication() {
     filename.innerHTML = "No File Selected";
     document.getElementById("questionsPerSkill").value = "2";
 
+    // Clear dashboard components
+    document.getElementById("languagesContainer").innerHTML = "";
+    document.getElementById("frameworksContainer").innerHTML = "";
+
     // Switch screens
     dashboard.classList.add("hidden");
     loadingSection.classList.add("hidden");
@@ -307,6 +311,65 @@ function populateDashboard(data) {
         ? evalReport.summary.narrative 
         : "No summary evaluation details provided.";
     document.getElementById("summary").innerText = narrative;
+
+    //---------------------------
+    // Languages Used
+    //---------------------------
+    const languagesContainer = document.getElementById("languagesContainer");
+    if (languagesContainer) {
+        languagesContainer.innerHTML = "";
+        const langList = Array.isArray(data.language_analysis) ? data.language_analysis : [];
+        if (langList.length === 0) {
+            languagesContainer.innerHTML = `<p class="text-gray-500 italic">No languages detected.</p>`;
+        } else {
+            langList.forEach(lang => {
+                const percentage = typeof lang.percentage === 'number' ? lang.percentage : 0;
+                const loc = typeof lang.loc === 'number' ? lang.loc : 0;
+                const langName = lang.language || "Unknown";
+                
+                languagesContainer.innerHTML += `
+                    <div class="mb-4">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-semibold text-gray-700">${langName}</span>
+                            <span class="text-sm text-gray-500">${percentage}% (${loc} LOC)</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    //---------------------------
+    // Frameworks & Libraries Detected
+    //---------------------------
+    const frameworksContainer = document.getElementById("frameworksContainer");
+    if (frameworksContainer) {
+        frameworksContainer.innerHTML = "";
+        const fwList = Array.isArray(data.framework_analysis) ? data.framework_analysis : [];
+        if (fwList.length === 0) {
+            frameworksContainer.innerHTML = `<p class="text-gray-500 italic">No frameworks or libraries detected.</p>`;
+        } else {
+            fwList.forEach(fw => {
+                const fwName = fw.framework || "Unknown";
+                const confidence = typeof fw.confidence === 'number' ? Math.round(fw.confidence * 100) : 0;
+                
+                frameworksContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <div>
+                            <span class="font-semibold text-gray-800">${fwName}</span>
+                            <p class="text-xs text-gray-400 mt-0.5">Confidence: ${confidence}%</p>
+                        </div>
+                        <span class="px-2.5 py-1 text-xs font-semibold bg-green-50 text-green-700 rounded-full border border-green-200">
+                            Detected
+                        </span>
+                    </div>
+                `;
+            });
+        }
+    }
 
     //---------------------------
     // Charts (Only load if skills are present)
