@@ -20,7 +20,7 @@ from app.services.skill_matcher import match_skills
 from app.services.question_generator import generate_questions_for_skills
 from app.services.outcome_evaluator import evaluate_outcomes
 from app.services.report_generator import build_report
-from app.llm.llm_factory import get_llm_client, get_llm_client_for_provider
+from app.llm.llm_factory import get_llm_client_for_provider
 from app.models.schemas import ProjectMetadata
 
 router = APIRouter()

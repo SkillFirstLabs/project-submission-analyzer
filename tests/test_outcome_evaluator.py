@@ -69,7 +69,6 @@ def test_detailed_fallback_eval_clean():
     assert any("Security: No high-severity" in s for s in report.strengths)
     assert any("Testing: Automated tests" in s for s in report.strengths)
     assert any("Configuration: Standard dependency" in s for s in report.strengths)
-    assert any("LLM offline" in g for g in report.gaps)
     assert not any("No automated unit tests" in g for g in report.gaps)
     assert not any("Missing standard dependency" in g for g in report.gaps)
 

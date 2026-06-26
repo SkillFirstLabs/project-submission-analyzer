@@ -93,12 +93,12 @@ def _is_safe_path(base: Path, target: Path) -> bool:
 
 
 def _check_zip_bomb(zf: zipfile.ZipFile, settings=None) -> None:
-    if settings is None:
-        settings = get_settings()
     """
     Inspect ZIP metadata for zip bomb characteristics.
     Raises ZipExtractionError if limits exceeded.
     """
+    if settings is None:
+        settings = get_settings()
     total_uncompressed = 0
     file_count = 0
 
@@ -151,7 +151,7 @@ def extract_zip(zip_bytes: bytes) -> ExtractionResult:
 
     import io
     try:
-        zf_check = zipfile.ZipFile(io.BytesIO(zip_bytes))
+        zipfile.ZipFile(io.BytesIO(zip_bytes))
     except zipfile.BadZipFile as exc:
         raise ZipExtractionError(
             f"Corrupted or invalid ZIP archive: {exc}",

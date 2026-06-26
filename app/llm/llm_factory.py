@@ -35,20 +35,9 @@ def _build_client(provider: str) -> BaseLLMClient:
         )
 
 
-def get_llm_client() -> BaseLLMClient:
-    """Return the default LLM client from settings (singleton)."""
-    provider = get_settings().llm_provider.lower()
-    return get_llm_client_for_provider(provider)
-
-
 def get_llm_client_for_provider(provider: str) -> BaseLLMClient:
     """Return (or create) a singleton client for the given provider."""
     provider = provider.strip().lower()
     if provider not in _clients:
         _clients[provider] = _build_client(provider)
     return _clients[provider]
-
-
-def reset_llm_client() -> None:
-    """Force all clients to be rebuilt on next call."""
-    _clients.clear()
