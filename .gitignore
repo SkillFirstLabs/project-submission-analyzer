@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+
+# Virtual Environment
+venv/
+env/
+
+# Environment Variables
+.env
+
+# Uploaded Files
+uploads/
+extracted_projects/
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+venv311/
+__pycache__/
+*.zip
+
+*.pyc
