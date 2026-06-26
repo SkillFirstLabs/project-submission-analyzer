@@ -4,3 +4,5 @@ __pycache__/
 uploads/
 extracted_projects/
 venv/
+.venv/
+.pytest_cache/

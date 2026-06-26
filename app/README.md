@@ -62,7 +62,6 @@ curl -X POST http://127.0.0.1:8000/analyze-submission \
 
 Demo ZIP: [sample_submissions/fastapi_crud.zip](sample_submissions/fastapi_crud.zip)
 
-Demo video: https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 ## Notes
 
