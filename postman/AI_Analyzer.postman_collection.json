@@ -1,0 +1,236 @@
+﻿{
+    "info":  {
+                 "_postman_id":  "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                 "name":  "Project Submission AI Analyzer",
+                 "description":  "API collection for the Project Submission AI Analyzer service.\n\nThis collection tests the `POST /api/v1/analyze-submission` endpoint which accepts a multipart/form-data request containing a ZIP file of a student project along with project metadata.\n\n## How to use\n1. Set the `baseUrl` collection variable (default: http://localhost:8000).\n2. In the **Analyze Submission** request, go to the **Body** tab â†’ **form-data**.\n3. For the `zip_file` key, change the type to **File** and select your ZIP archive.\n4. Click **Send**.",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8000",
+                         "type":  "string",
+                         "description":  "Base URL of the running API server."
+                     }
+                 ],
+    "item":  [
+                 {
+                     "name":  "Health Check",
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              ""
+                                                          ]
+                                             },
+                                     "description":  "Verifies the API server is running. Returns app name and status."
+                                 },
+                     "response":  [
+                                      {
+                                          "name":  "Server Running",
+                                          "status":  "OK",
+                                          "code":  200,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\n  \"message\": \"Project Submission AI Analyzer API\",\n  \"status\": \"running\"\n}"
+                                      }
+                                  ]
+                 },
+                 {
+                     "name":  "Analyze Submission â€“ Full Request",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+
+                                                ],
+                                     "body":  {
+                                                  "mode":  "formdata",
+                                                  "formdata":  [
+                                                                   {
+                                                                       "key":  "project_title",
+                                                                       "value":  "Inventory Management System",
+                                                                       "description":  "Title of the student project (required, max 200 chars).",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "project_description",
+                                                                       "value":  "A REST API built with FastAPI and SQLite for managing inventory items.",
+                                                                       "description":  "Brief project description (optional, max 5000 chars).",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "project_outcomes",
+                                                                       "value":  "1. Build a REST API with CRUD operations\n2. Implement SQLite database integration\n3. Add JWT authentication\n4. Write unit tests with pytest",
+                                                                       "description":  "Stated learning outcomes (required). Use newline or comma separation.",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "questions_per_skill",
+                                                                       "value":  "2",
+                                                                       "description":  "Number of questions to generate per detected skill (1â€“5). Default: 2.",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "zip_file",
+                                                                       "description":  "ZIP archive of the student project submission (required). Change this field type to File and select your .zip file.",
+                                                                       "type":  "file",
+                                                                       "src":  ""
+                                                                   }
+                                                               ]
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/v1/analyze-submission",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "v1",
+                                                              "analyze-submission"
+                                                          ]
+                                             },
+                                     "description":  "Analyzes a student project ZIP submission.\n\n**Steps:**\n1. Select this request.\n2. Open the **Body** tab.\n3. Find the `zip_file` row and set its type to **File** (click the dropdown on the right of the key).\n4. Click **Select Files** and pick your `.zip` archive.\n5. Click **Send**.\n\n**Expected response:** 200 OK with a JSON evaluation report.\n\n**Common errors:**\n- `400 INVALID_ZIP` â€“ corrupt or path-traversal ZIP.\n- `413 FILE_TOO_LARGE` â€“ ZIP exceeds the configured upload size limit.\n- `415 UNSUPPORTED_ARCHIVE` â€“ file is not a `.zip`.\n- `422 VALIDATION_ERROR` â€“ required form fields missing or invalid."
+                                 },
+                     "response":  [
+                                      {
+                                          "name":  "200 â€“ Success",
+                                          "status":  "OK",
+                                          "code":  200,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\\n  \\\"project_title\\\": \\\"Inventory Management System\\\",\\n  \\\"suggested_skills\\\": [\\n    { \\\"skill_id\\\": \\\"sk-py-001\\\", \\\"skill_name\\\": \\\"Python\\\", \\\"confidence\\\": 0.95, \\\"rationale\\\": \\\"Python detected in 100% of source files.\\\" },\\n    { \\\"skill_id\\\": \\\"sk-fw-fastapi\\\", \\\"skill_name\\\": \\\"FastAPI\\\", \\\"confidence\\\": 0.90, \\\"rationale\\\": \\\"FastAPI imports detected in main.py.\\\" }\\n  ],\\n  \\\"evaluation_report\\\": {\\n    \\\"skills\\\": [\\n      { \\\"skill_id\\\": \\\"sk-py-001\\\", \\\"skill_name\\\": \\\"Python\\\", \\\"confidence\\\": 0.95, \\\"rationale\\\": \\\"Primary language.\\\" }\\n    ],\\n    \\\"summary\\\": {\\n      \\\"overall_alignment\\\": \\\"strong\\\",\\n      \\\"alignment_score\\\": 0.90,\\n      \\\"narrative\\\": \\\"The submission demonstrates strong alignment with all stated objectives.\\\",\\n      \\\"strengths\\\": [\\\"REST API implemented\\\", \\\"Unit tests present\\\", \\\"Docker configuration found\\\"],\\n      \\\"gaps\\\": []\\n    },\\n    \\\"outcome_evaluation\\\": [\\n      { \\\"stated_outcome\\\": \\\"Build REST API with CRUD operations\\\", \\\"status\\\": \\\"met\\\", \\\"evidence\\\": \\\"GET /items and POST /items routes detected in api/routes.py.\\\", \\\"gap\\\": null },\\n      { \\\"stated_outcome\\\": \\\"Write unit tests with pytest\\\", \\\"status\\\": \\\"met\\\", \\\"evidence\\\": \\\"pytest test files detected (3 total in tests/ directory).\\\", \\\"gap\\\": null }\\n    ]\\n  },\\n  \\\"viva_questions\\\": [\\n    {\\n      \\\"skill_id\\\": \\\"sk-py-001\\\",\\n      \\\"skill_name\\\": \\\"Python\\\",\\n      \\\"question_type\\\": \\\"conceptual\\\",\\n      \\\"question\\\": \\\"What is the difference between a list and a tuple in Python, and when would you choose one over the other?\\\",\\n      \\\"expected_answer_hint\\\": \\\"Lists are mutable, tuples are immutable. Tuples are preferred for fixed data or as dictionary keys.\\\"\\n    },\\n    {\\n      \\\"skill_id\\\": \\\"sk-fw-fastapi\\\",\\n      \\\"skill_name\\\": \\\"FastAPI\\\",\\n      \\\"question_type\\\": \\\"codebase\\\",\\n      \\\"question\\\": \\\"In your routes.py, you used async def for your route handlers. Can you explain why and what benefit it provides in your API?\\\",\\n      \\\"expected_answer_hint\\\": \\\"FastAPI supports async handlers for non-blocking I/O, improving throughput under concurrent requests.\\\"\\n    }\\n  ],\\n  \\\"metadata\\\": {\\n    \\\"files_analyzed\\\": 24,\\n    \\\"source_files\\\": 18,\\n    \\\"processing_time_ms\\\": 47,\\n    \\\"parser_version\\\": \\\"1.0\\\",\\n    \\\"model\\\": \\\"gemini-2.5-flash\\\"\\n  },\\n  \\\"processing_time_ms\\\": 3420\\n}"
+                                      },
+                                      {
+                                          "name":  "400 â€“ Invalid ZIP",
+                                          "status":  "Bad Request",
+                                          "code":  400,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\n  \"error\": {\n    \"code\": \"INVALID_ZIP\",\n    \"message\": \"Uploaded file is not a valid or corrupt ZIP archive.\",\n    \"details\": null\n  }\n}"
+                                      },
+                                      {
+                                          "name":  "413 â€“ File Too Large",
+                                          "status":  "Request Entity Too Large",
+                                          "code":  413,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\n  \"error\": {\n    \"code\": \"FILE_TOO_LARGE\",\n    \"message\": \"Upload file exceeds maximum limit of 100 MB.\",\n    \"details\": null\n  }\n}"
+                                      },
+                                      {
+                                          "name":  "415 â€“ Unsupported Format",
+                                          "status":  "Unsupported Media Type",
+                                          "code":  415,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\n  \"error\": {\n    \"code\": \"UNSUPPORTED_ARCHIVE\",\n    \"message\": \"Only ZIP archives are supported.\",\n    \"details\": null\n  }\n}"
+                                      },
+                                      {
+                                          "name":  "422 â€“ Validation Error",
+                                          "status":  "Unprocessable Entity",
+                                          "code":  422,
+                                          "header":  [
+                                                         {
+                                                             "key":  "Content-Type",
+                                                             "value":  "application/json"
+                                                         }
+                                                     ],
+                                          "body":  "{\n  \"error\": {\n    \"code\": \"VALIDATION_ERROR\",\n    \"message\": \"Field \u0027project_title\u0027: field required\",\n    \"details\": [\n      {\n        \"loc\": [\"project_title\"],\n        \"msg\": \"field required\",\n        \"type\": \"missing\"\n      }\n    ]\n  }\n}"
+                                      }
+                                  ]
+                 },
+                 {
+                     "name":  "Analyze Submission â€“ Minimal Request (no description)",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+
+                                                ],
+                                     "body":  {
+                                                  "mode":  "formdata",
+                                                  "formdata":  [
+                                                                   {
+                                                                       "key":  "project_title",
+                                                                       "value":  "Todo App",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "project_outcomes",
+                                                                       "value":  "Build a CRUD todo list API",
+                                                                       "type":  "text"
+                                                                   },
+                                                                   {
+                                                                       "key":  "zip_file",
+                                                                       "description":  "Select your .zip archive here.",
+                                                                       "type":  "file",
+                                                                       "src":  ""
+                                                                   }
+                                                               ]
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/v1/analyze-submission",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "v1",
+                                                              "analyze-submission"
+                                                          ]
+                                             },
+                                     "description":  "Minimal request: only required fields sent. `project_description` and `questions_per_skill` are omitted and will use their defaults."
+                                 },
+                     "response":  [
+
+                                  ]
+                 },
+                 {
+                     "name":  "Swagger UI",
+                     "request":  {
+                                     "method":  "GET",
+                                     "header":  [
+
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/docs",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "docs"
+                                                          ]
+                                             },
+                                     "description":  "Opens the interactive Swagger UI documentation in the browser."
+                                 },
+                     "response":  [
+
+                                  ]
+                 }
+             ]
+}
