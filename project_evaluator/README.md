@@ -30,12 +30,6 @@ Built on the **OpenAI Agents SDK** (`agents` package), not raw chat completions 
 each pipeline stage is a separate `Agent` with its own instructions, tools, and a
 strict Pydantic `output\_type` so output is always structured.
 
-### Why Streamlit isn't the API
-
-The assignment requires a real `POST /analyze-submission` REST endpoint — Streamlit
-apps don't expose that. So **FastAPI (`main.py`) is the actual graded API**, and
-`streamlit\_app.py` is just a demo front-end that calls it over HTTP. Use it for your
-demo video; the API itself works fine with curl/Postman/anything.
 
 ## Folder structure
 
