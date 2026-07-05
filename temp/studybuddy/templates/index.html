@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyBuddy - {{ selected_subject }} Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📘 {{ selected_subject }} Programming Notes</h1>
+
+        <form method="get" action="/">
+            <label for="subject">Select Subject:</label>
+            <select name="subject" id="subject" onchange="this.form.submit()">
+                {% for subject in subjects %}
+                <option value="{{ subject }}" {% if subject == selected_subject %}selected{% endif %}>{{ subject }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        {% for section, items in content.items() %}
+        <div class="section">
+            <h2>{{ section }}</h2>
+            <ul>
+                {% for item in items %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

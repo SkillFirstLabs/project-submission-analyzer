@@ -1,0 +1,14 @@
+[
+    {
+        "skill_id": "1",
+        "skill_name": "Python"
+    },
+    {
+        "skill_id": "2",
+        "skill_name": "FastAPI"
+    },
+    {
+        "skill_id": "3",
+        "skill_name": "PostgreSQL"
+    }
+]

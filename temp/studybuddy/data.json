@@ -1,0 +1,45 @@
+{
+  "Python Programming": {
+    "Key Concepts": [
+      "Python is an interpreted, high-level, dynamically typed language.",
+      "Indentation is used to define code blocks.",
+      "Supports object-oriented, functional, and procedural programming."
+    ],
+    "Important Questions": [
+      "What are Python’s key features?",
+      "Difference between list, tuple, and dictionary?",
+      "What is a lambda function?"
+    ],
+    "Formulas": [
+      "len(list) – Returns length of list",
+      "list.append(x) – Adds x to the end",
+      "dict.get(key) – Gets value by key"
+    ],
+    "Quick Tips": [
+      "Use list comprehensions for cleaner code.",
+      "Avoid using mutable default arguments in functions."
+    ]
+  },
+
+  "C Programming": {
+    "Key Concepts": [
+      "C is a procedural programming language.",
+      "Compiled and statically typed.",
+      "Memory is managed manually using pointers."
+    ],
+    "Important Questions": [
+      "Explain call by value and call by reference.",
+      "What is the use of pointers?",
+      "Difference between malloc() and calloc()?"
+    ],
+    "Formulas": [
+      "#define PI 3.14 – Define constant",
+      "sizeof(type) – Gets size of data type",
+      "ptr = &var – Pointer initialization"
+    ],
+    "Quick Tips": [
+      "Always initialize variables.",
+      "Use header guards in custom header files."
+    ]
+  }
+}
