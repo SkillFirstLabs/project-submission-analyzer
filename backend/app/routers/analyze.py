@@ -2,11 +2,15 @@ import time
 import os
 import uuid
 import json
-from fastapi import APIRouter, UploadFile, Form, File, HTTPException
+import shutil
+from fastapi import APIRouter, UploadFile, Form, File, HTTPException, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db
+from app.db.models import User, Submission, EvaluationReport
+from app.services.auth import require_role
 from app.schemas.schemas import AnalyzeSubmissionResponse
 from app.services.extractor import extract_and_analyze_zip, ZipSafetyError
 from app.services.llm import analyze_project
-from app.store.session_store import session_store
 
 router = APIRouter()
 
@@ -30,20 +34,25 @@ async def analyze_submission(
     project_description: str = Form(None),
     project_outcomes: str = Form(...),
     zip_file: UploadFile = File(...),
-    questions_per_skill: int = Form(2)
+    questions_per_skill: int = Form(2),
+    current_user: User = Depends(require_role("student")),
+    db: AsyncSession = Depends(get_db)
 ):
     start_time = time.time()
     
     # 1. Save uploaded file temporarily to run safe extraction
     temp_zip_name = f"temp_upload_{uuid.uuid4().hex}.zip"
+    final_zip_path = os.path.join("app", "data", "uploads", temp_zip_name)
+    os.makedirs(os.path.dirname(final_zip_path), exist_ok=True)
+    
     try:
-        with open(temp_zip_name, "wb") as buffer:
+        with open(final_zip_path, "wb") as buffer:
             content = await zip_file.read()
             buffer.write(content)
             
         # 2. Safely extract and parse codebase contents
         try:
-            analysis_result = extract_and_analyze_zip(temp_zip_name)
+            analysis_result = extract_and_analyze_zip(final_zip_path)
         except ZipSafetyError as e:
             raise HTTPException(status_code=400, detail=str(e))
         except Exception as e:
@@ -88,6 +97,8 @@ async def analyze_submission(
             "model_tokens_used": llm_response.get("tokens_used", 0)
         }
         
+        sub_id = str(uuid.uuid4())
+        
         response_data = {
             "project_title": project_title,
             "suggested_skills": result.get("suggested_skills", []),
@@ -97,15 +108,37 @@ async def analyze_submission(
             },
             "proctoring_report": None,
             "metadata": metadata,
-            "processing_time_ms": processing_time_ms
+            "processing_time_ms": processing_time_ms,
+            "session_id": sub_id  # For frontend backwards compatibility
         }
         
+        # Save to DB
+        new_submission = Submission(
+            id=sub_id,
+            student_id=current_user.id,
+            project_title=project_title,
+            description=project_description or "",
+            outcomes=project_outcomes,
+            zip_path=final_zip_path
+        )
+        db.add(new_submission)
+        
+        new_evaluation = EvaluationReport(
+            id=str(uuid.uuid4()),
+            submission_id=sub_id,
+            suggested_skills=response_data["suggested_skills"],
+            evaluation_report=response_data["evaluation_report"]
+        )
+        db.add(new_evaluation)
+        
+        await db.commit()
+        response_data["session_id"] = sub_id
+        
+        # Strip out sensitive info since this goes to the student
+        response_data["suggested_skills"] = []
+        response_data["evaluation_report"]["summary"] = {}
+
         return response_data
 
     finally:
-        # Cleanup temp file
-        if os.path.exists(temp_zip_name):
-            try:
-                os.remove(temp_zip_name)
-            except Exception:
-                pass
+        pass # Keep ZIP in uploads folder for mentor review

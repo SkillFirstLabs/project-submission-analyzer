@@ -45,9 +45,9 @@ class OutcomeEvaluation(BaseModel):
     gap: Optional[str] = None
 
 class EvaluationSummary(BaseModel):
-    overall_alignment: str
-    alignment_score: float
-    narrative: str
+    overall_alignment: Optional[str] = None
+    alignment_score: Optional[float] = None
+    narrative: Optional[str] = None
     outcome_evaluation: List[OutcomeEvaluation] = []
     strengths: List[str] = []
     gaps: List[str] = []
@@ -79,9 +79,11 @@ class ProctoringReport(BaseModel):
     narrative: str
 
 class AnalyzeSubmissionResponse(BaseModel):
+    session_id: str
     project_title: str
     suggested_skills: List[SuggestedSkill]
     evaluation_report: EvaluationReport
     proctoring_report: Optional[ProctoringReport] = None
+    viva_grading: Optional[Dict[str, Any]] = None
     metadata: Dict[str, Any]
     processing_time_ms: float

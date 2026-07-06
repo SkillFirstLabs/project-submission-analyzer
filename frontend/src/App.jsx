@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // API Base URL
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'http://127.0.0.1:8000';
 
 // ─── Timeline data ────────────────────────────────────────────────────────────
 const TIMELINE_STEPS = [
@@ -108,11 +108,270 @@ function LoadingOverlay({ label = 'Processing', sub = 'This may take a few secon
   );
 }
 
+// ─── AuthPage Component ────────────────────────────────────────────────────────
+function AuthPage({ onLogin }) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('student');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    try {
+      if (isLogin) {
+        const formData = new URLSearchParams();
+        formData.append('username', email);
+        formData.append('password', password);
+        
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.detail || 'Login failed');
+        }
+        const data = await res.json();
+        
+        // Parse JWT to get role
+        const token = data.access_token;
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userRole = payload.role;
+        
+        onLogin(token, userRole);
+      } else {
+        const res = await fetch(`${API_BASE}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name, role })
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.detail || 'Registration failed');
+        }
+        
+        // Auto switch to login
+        setIsLogin(true);
+        setError('Registration successful! Please log in.');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)' }}>
+      <div className="glass-card" style={{ width: '100%', maxWidth: '400px', padding: '2.5rem', textAlign: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <img src="/AIvaluate-removebg-preview.png" alt="AIvaluate Logo" style={{ height: '3.5rem', width: 'auto' }} />
+        </div>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '0.95rem' }}>
+          {isLogin ? 'Sign in to continue' : 'Create a new account'}
+        </p>
+
+        {error && (
+          <div style={{ padding: '0.75rem', marginBottom: '1.5rem', background: error.includes('successful') ? 'rgba(52, 168, 83, 0.1)' : 'rgba(219, 68, 55, 0.1)', color: error.includes('successful') ? '#34a853' : '#db4437', borderRadius: '6px', fontSize: '0.9rem' }}>
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', textAlign: 'left' }}>
+          {!isLogin && (
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Full Name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} required className="form-input" placeholder="Jane Doe" style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+            </div>
+          )}
+          
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Email Address</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="form-input" placeholder="you@example.com" style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="form-input" placeholder="••••••••" style={{ width: '100%', boxSizing: 'border-box', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }} />
+          </div>
+
+          {!isLogin && (
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Role</label>
+              <select value={role} onChange={e => setRole(e.target.value)} className="form-input" style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                <option value="student">Student</option>
+                <option value="mentor">Mentor</option>
+              </select>
+            </div>
+          )}
+
+          <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: '1rem', width: '100%', boxSizing: 'border-box', justifyContent: 'center' }}>
+            {loading ? 'Please wait...' : (isLogin ? 'Log In' : 'Sign Up')}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.5)', borderRadius: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          <strong>Test Credentials (Auto-Login):</strong><br/>
+          Email: <code>admin@aivaluate.com</code><br/>
+          Password: <code>password123</code>
+          <div style={{ marginTop: '0.5rem' }}>
+            <button 
+              onClick={(e) => { e.preventDefault(); setEmail('admin@aivaluate.com'); setPassword('password123'); }}
+              style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '4px', cursor: 'pointer' }}
+            >
+              Fill Details
+            </button>
+          </div>
+        </div>
+        
+        <p style={{ marginTop: '2rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          <span style={{ color: 'var(--accent-primary)', cursor: 'pointer', fontWeight: '500' }} onClick={() => { setIsLogin(!isLogin); setError(''); }}>
+            {isLogin ? 'Sign up' : 'Log in'}
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Mentor Dashboard Component ───────────────────────────────────────────────
+function MentorDashboard({ authToken, onLogout, API_BASE, onViewReport }) {
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/mentor/submissions`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        if (!res.ok) throw new Error('Failed to fetch submissions');
+        const data = await res.json();
+        setSubmissions(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubmissions();
+  }, [authToken, API_BASE]);
+
+  const handleExport = async (id, format) => {
+    window.open(`${API_BASE}/reports/${id}/export?format=${format}&token=${authToken}`, '_blank');
+    // Note: for real apps, better to fetch and trigger download since token in query is less secure.
+  };
+
+  const handleView = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE}/mentor/sessions/${id}`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      if (!res.ok) throw new Error('Failed to fetch report');
+      const data = await res.json();
+      onViewReport(data);
+    } catch (err) {
+      alert('Error fetching report: ' + err.message);
+    }
+  };
+
+  return (
+    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h2>Mentor Dashboard</h2>
+        <button className="btn btn-secondary" onClick={onLogout} style={{ border: '1px solid #dc2626', color: '#dc2626' }}>Logout</button>
+      </div>
+
+      {loading && <p>Loading submissions...</p>}
+      {error && <p style={{ color: '#dc2626' }}>{error}</p>}
+
+      {!loading && !error && (
+        <table style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--bg-secondary)', borderRadius: '8px', overflow: 'hidden' }}>
+          <thead>
+            <tr style={{ background: 'rgba(0,0,0,0.05)', textAlign: 'left' }}>
+              <th style={{ padding: '1rem' }}>Project Title</th>
+              <th style={{ padding: '1rem' }}>Status</th>
+              <th style={{ padding: '1rem' }}>Integrity Score</th>
+              <th style={{ padding: '1rem' }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {submissions.map(sub => (
+              <tr key={sub.id} style={{ borderTop: '1px solid var(--border-color)' }}>
+                <td style={{ padding: '1rem' }}>{sub.project_title}</td>
+                <td style={{ padding: '1rem' }}>
+                  <span className={`badge badge-${sub.viva_status === 'completed' ? 'low' : 'medium'}`}>
+                    {sub.viva_status}
+                  </span>
+                </td>
+                <td style={{ padding: '1rem' }}>{sub.integrity_score || '-'}</td>
+                <td style={{ padding: '1rem', display: 'flex', gap: '0.5rem' }}>
+                  {sub.viva_status === 'completed' && (
+                    <>
+                      <button onClick={() => handleView(sub.id)} className="btn btn-primary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>View</button>
+                      <button onClick={() => handleExport(sub.id, 'json')} className="btn btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>JSON</button>
+                      <button onClick={() => handleExport(sub.id, 'pdf')} className="btn btn-secondary" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>PDF</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {submissions.length === 0 && (
+              <tr>
+                <td colSpan="4" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                  No submissions yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
-  // App state: 'landing' | 'upload' | 'consent' | 'viva' | 'report'
-  const [view, setView] = useState('landing');
+  // App state: 'auth' | 'landing' | 'upload' | 'consent' | 'viva' | 'report' | 'mentor_dashboard' | 'mentor_live_view'
+  const [view, setView] = useState('auth');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Auth state
+  const [authToken, setAuthToken] = useState(localStorage.getItem('token') || null);
+  const [userRole, setUserRole] = useState(localStorage.getItem('role') || null);
+  
+  useEffect(() => {
+    if (authToken && userRole) {
+      setView(userRole === 'mentor' ? 'mentor_dashboard' : 'landing');
+    }
+  }, [authToken, userRole]);
+
+  const handleLogin = (token, role) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('role', role);
+    setAuthToken(token);
+    setUserRole(role);
+    setView(role === 'mentor' ? 'mentor_dashboard' : 'landing');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    setAuthToken(null);
+    setUserRole(null);
+    setView('auth');
+  };
 
   // Upload state
   const [projectTitle, setProjectTitle] = useState('Task Manager App');
@@ -139,11 +398,22 @@ export default function App() {
   const [showRawJson, setShowRawJson] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
 
+  // Inactivity tracking
+  const [inactivityCountdown, setInactivityCountdown] = useState(null);
+  const lastActivityRef = useRef(Date.now());
+
+  // Scroll to top on view change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [view]);
+
   // Media & canvas references
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const proctorIntervalRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const audioAnalyserRef = useRef(null);
 
   // Simple simulator inputs (for demo verification)
   const [simulatedEvent, setSimulatedEvent] = useState('gaze_off_screen');
@@ -170,6 +440,9 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE}/analyze-submission`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        },
         body: formData,
       });
 
@@ -190,9 +463,8 @@ export default function App() {
       });
       setQuestions(allQuestions);
 
-      // Generate a session ID
-      const newSessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
-      setSessionId(newSessionId);
+      // Use the session ID returned by the backend
+      setSessionId(data.session_id);
 
       setView('consent');
     } catch (err) {
@@ -209,19 +481,35 @@ export default function App() {
       mediaStreamRef.current = null;
     }
     if (videoRef.current) videoRef.current.srcObject = null;
+    if (audioContextRef.current) {
+      audioContextRef.current.close().catch(() => {});
+      audioContextRef.current = null;
+      audioAnalyserRef.current = null;
+    }
+    if (proctorIntervalRef.current) {
+      clearInterval(proctorIntervalRef.current);
+      proctorIntervalRef.current = null;
+    }
   };
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      // Request both video AND audio for microphone monitoring
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       mediaStreamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream;
       return true;
     } catch (err) {
-      setError('Could not access webcam. Camera permission is required for the proctored viva.');
-      return false;
+      // Fallback: try video-only if mic permission denied
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        mediaStreamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        return true;
+      } catch (err2) {
+        setError('Could not access webcam. Camera permission is required for the proctored viva.');
+        return false;
+      }
     }
   };
 
@@ -240,7 +528,10 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE}/viva-session/start`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
         body: JSON.stringify({
           session_id: sessionId,
           consent_acknowledged: true,
@@ -261,6 +552,7 @@ export default function App() {
       }, 1000);
 
     } catch (err) {
+      stopCamera();
       setError(err.message);
     } finally {
       setLoading(false);
@@ -273,7 +565,10 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE}/viva-session/event`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
         body: JSON.stringify({
           session_id: sessionId,
           event_type: eventType,
@@ -330,72 +625,253 @@ export default function App() {
     }
   }, [view]);
 
-  // Gaze / Face presence canvas drawing (Dynamic mock simulation matching actual webcam feed)
+  // ── Real Face Mesh + Head Pose + Audio Monitoring ────────────────────────
   useEffect(() => {
-    if (view !== 'viva' || !videoRef.current) return;
+    if (view !== 'viva') return;
 
-    let animFrame;
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const video = videoRef.current;
+    if (!canvas || !video) return;
     const ctx = canvas.getContext('2d');
 
-    // Draw green/blue wireframe face guides
-    const renderWireframe = () => {
-      if (!videoRef.current) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ── Timing state (tracked via closure, not React state) ──
+    let headTurnDir = null;
+    let headTurnStart = null;
+    let faceAbsentStart = null;
+    const flagCooldown = {}; // type → last flag timestamp
+    const FLAG_CD = 9000; // 9s cooldown between same flag type
 
-      const width = canvas.width;
-      const height = canvas.height;
+    const canFlag = (type) => {
+      const now = Date.now();
+      if (!flagCooldown[type] || now - flagCooldown[type] > FLAG_CD) {
+        flagCooldown[type] = now;
+        return true;
+      }
+      return false;
+    };
 
-      // Draw minimal human eye guides
-      ctx.strokeStyle = '#4285f4';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
+    // ── Activity monitoring (typing/inactivity detection) ──
+    const activityInterval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - lastActivityRef.current;
+      if (elapsed > 15000) { // 10s + 5s warning
+        if (canFlag('user_inactive')) {
+          postTelemetryEvent('user_inactive', elapsed);
+        }
+        lastActivityRef.current = now; // reset to avoid immediate re-flagging
+        setInactivityCountdown(null);
+      } else if (elapsed > 10000) {
+        setInactivityCountdown(5 - Math.floor((elapsed - 10000) / 1000));
+      } else {
+        setInactivityCountdown(null);
+      }
+    }, 500);
 
-      // Head ellipse guide
-      ctx.beginPath();
-      ctx.ellipse(width / 2, height / 2, 70, 95, 0, 0, 2 * Math.PI);
-      ctx.stroke();
+    // ── Audio monitoring (speech detection) ──
+    let audioInterval = null;
+    const stream = mediaStreamRef.current;
+    const hasAudio = stream && stream.getAudioTracks().length > 0;
 
-      // Eye line
-      ctx.beginPath();
-      ctx.moveTo(width / 2 - 80, height / 2 - 15);
-      ctx.lineTo(width / 2 + 80, height / 2 - 15);
-      ctx.stroke();
+    if (hasAudio) {
+      try {
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.6;
+        source.connect(analyser);
+        audioContextRef.current = audioCtx;
+        audioAnalyserRef.current = analyser;
 
-      // Draw tracked landmark indicator dots
-      ctx.fillStyle = '#0f9d58';
-      ctx.setLineDash([]);
+        const timeDomain = new Uint8Array(analyser.fftSize);
+        let speakingStart = null;
 
-      // Dynamic micro movements
-      const pulse = Math.sin(Date.now() / 400) * 3;
+        audioInterval = setInterval(() => {
+          if (!audioAnalyserRef.current) return;
+          audioAnalyserRef.current.getByteTimeDomainData(timeDomain);
+          // RMS of audio signal
+          let sum = 0;
+          for (let i = 0; i < timeDomain.length; i++) {
+            const v = (timeDomain[i] - 128) / 128;
+            sum += v * v;
+          }
+          const rms = Math.sqrt(sum / timeDomain.length);
 
-      // Face landmarks points
-      const points = [
-        { x: width / 2, y: height / 2 - 50 + pulse }, // Forehead
-        { x: width / 2 - 30, y: height / 2 - 15 + pulse }, // Left eye
-        { x: width / 2 + 30, y: height / 2 - 15 + pulse }, // Right eye
-        { x: width / 2, y: height / 2 + 15 + pulse }, // Nose
-        { x: width / 2 - 20, y: height / 2 + 45 + pulse }, // Mouth Left
-        { x: width / 2 + 20, y: height / 2 + 45 + pulse }, // Mouth Right
-        { x: width / 2, y: height / 2 + 70 + pulse } // Chin
-      ];
+          if (rms > 0.06) { // threshold: noticeable voice
+            if (!speakingStart) speakingStart = Date.now();
+            else if (Date.now() - speakingStart > 1500) {
+              // 4000ms cooldown for voice flags specifically to avoid spam
+              const now = Date.now();
+              if (!flagCooldown['speaking_detected'] || now - flagCooldown['speaking_detected'] > 4000) {
+                postTelemetryEvent('speaking_detected', now - speakingStart);
+                flagCooldown['speaking_detected'] = now;
+              }
+              speakingStart = Date.now();
+            }
+          } else {
+            speakingStart = null;
+          }
+        }, 250);
+        proctorIntervalRef.current = audioInterval;
+      } catch (e) {
+        console.warn('Audio monitoring unavailable:', e);
+      }
+    }
 
-      points.forEach(pt => {
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 4, 0, 2 * Math.PI);
-        ctx.fill();
+    // ── MediaPipe Face Mesh ──
+    let animFrameId;
+    let faceMesh = null;
+    let lastSend = 0;
+    let multiFaceConsecutiveFrames = 0;
+
+    const initFaceMesh = () => {
+      if (!window.FaceMesh) return; // CDN not loaded yet
+
+      faceMesh = new window.FaceMesh({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/${file}`,
       });
 
-      animFrame = requestAnimationFrame(renderWireframe);
+      faceMesh.setOptions({
+        maxNumFaces: 2,
+        refineLandmarks: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+
+      faceMesh.onResults((results) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const now = Date.now();
+        const faces = results.multiFaceLandmarks || [];
+        const numFaces = faces.length;
+
+        // ── Multiple faces ──
+        if (numFaces > 1) {
+          multiFaceConsecutiveFrames++;
+          if (multiFaceConsecutiveFrames > 3 && canFlag('multiple_faces_detected')) {
+            postTelemetryEvent('multiple_faces_detected', 0);
+          }
+        } else {
+          multiFaceConsecutiveFrames = 0;
+        }
+        // ── No face ──
+        if (numFaces === 0) {
+          if (!faceAbsentStart) faceAbsentStart = now;
+          else if (now - faceAbsentStart > 5000 && canFlag('face_not_detected')) {
+            postTelemetryEvent('face_not_detected', now - faceAbsentStart);
+            faceAbsentStart = now;
+          }
+          // Red overlay
+          ctx.fillStyle = 'rgba(220,38,38,0.18)';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = '#dc2626';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('NO FACE DETECTED', canvas.width / 2, canvas.height / 2);
+        } else {
+          faceAbsentStart = null;
+        }
+
+        if (numFaces >= 1) {
+          const lms = faces[0];
+
+          // Draw key landmarks
+          ctx.fillStyle = 'rgba(0,255,136,0.75)';
+          [1, 33, 263, 61, 291, 234, 454, 10, 152, 168].forEach((idx) => {
+            const p = lms[idx];
+            if (!p) return;
+            ctx.beginPath();
+            ctx.arc(p.x * canvas.width, p.y * canvas.height, 2.5, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+
+          // ── Head Pose Estimation ──
+          const nose = lms[1];
+          const leftCheek = lms[234];
+          const rightCheek = lms[454];
+          const forehead = lms[10];
+          const chin = lms[152];
+          const leftEye = lms[33];
+          const rightEye = lms[263];
+
+          const faceW = Math.abs(rightCheek.x - leftCheek.x);
+          const faceH = Math.abs(chin.y - forehead.y);
+          const eyeMidY = (leftEye.y + rightEye.y) / 2;
+
+          const yawRatio = faceW > 0.01 ? (nose.x - leftCheek.x) / faceW : 0.5;
+          const pitchRatio = faceH > 0.01 ? (nose.y - eyeMidY) / faceH : 0.3;
+
+          // Thresholds (tune as needed)
+          let direction = null;
+          if (yawRatio < 0.33) direction = 'RIGHT';
+          else if (yawRatio > 0.67) direction = 'LEFT';
+          else if (pitchRatio < 0.08) direction = 'UP';
+          else if (pitchRatio > 0.42) direction = 'DOWN';
+
+          if (direction) {
+            if (headTurnDir !== direction) {
+              headTurnDir = direction;
+              headTurnStart = now;
+            } else {
+              const elapsed = now - headTurnStart;
+              if (elapsed > 4000 && canFlag('gaze_off_screen')) {
+                postTelemetryEvent('gaze_off_screen', elapsed);
+                headTurnStart = now;
+              }
+
+              // Show countdown bar
+              const progress = Math.min(elapsed / 4000, 1);
+              ctx.fillStyle = `rgba(220,38,38,${0.25 + progress * 0.5})`;
+              ctx.fillRect(0, 0, canvas.width * progress, 4);
+              ctx.fillStyle = '#dc2626';
+              ctx.font = 'bold 10px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.fillText(
+                `HEAD TURNED ${direction} — ${(elapsed / 1000).toFixed(1)}s`,
+                canvas.width / 2, 16
+              );
+            }
+          } else {
+            headTurnDir = null;
+            headTurnStart = null;
+          }
+        }
+      });
     };
 
-    renderWireframe();
+    initFaceMesh();
+
+    // Frame processing loop
+    const processFrame = async () => {
+      const now = Date.now();
+      if (faceMesh && video.readyState >= 2 && now - lastSend > 100) {
+        lastSend = now;
+        try { await faceMesh.send({ image: video }); } catch (_) {}
+      } else if (!faceMesh) {
+        // Fallback wireframe while CDN loads
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'rgba(66,133,244,0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.ellipse(canvas.width / 2, canvas.height / 2, 70, 95, 0, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // retry init
+        if (window.FaceMesh) initFaceMesh();
+      }
+      animFrameId = requestAnimationFrame(processFrame);
+    };
+
+    animFrameId = requestAnimationFrame(processFrame);
 
     return () => {
-      cancelAnimationFrame(animFrame);
+      cancelAnimationFrame(animFrameId);
+      if (audioInterval) clearInterval(audioInterval);
+      if (activityInterval) clearInterval(activityInterval);
+      if (faceMesh) faceMesh.close().catch(() => {});
     };
-  }, [view]);
+  }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle paste warning
   const handlePaste = (e) => {
@@ -412,9 +888,14 @@ export default function App() {
     try {
       const response = await fetch(`${API_BASE}/viva-session/end`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
         body: JSON.stringify({
-          session_id: sessionId
+          session_id: sessionId,
+          questions: questions,
+          answers: answers
         })
       });
 
@@ -424,7 +905,7 @@ export default function App() {
 
       const data = await response.json();
       setFinalReport(data);
-      setView('report');
+      setView('thankyou');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -456,6 +937,11 @@ export default function App() {
 
   return (
     <div className="container" style={{ minHeight: '90vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+
+      {/* VIEW -1: AUTH PAGE */}
+      {view === 'auth' && <AuthPage onLogin={handleLogin} />}
+
+
 
       {/* Full-screen loading overlay */}
       {loading && (
@@ -517,34 +1003,61 @@ export default function App() {
       )}
 
       {/* Header */}
-      {view !== 'landing' && (
+      {view !== 'auth' && (
         <header style={{ textAlign: 'center', marginBottom: '2.5rem', position: 'relative' }}>
+          {view !== 'landing' && (
+            <button
+              onClick={() => setView(userRole === 'mentor' ? 'mentor_dashboard' : 'landing')}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: '1.5px solid #000',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '700',
+                color: 'var(--text-primary)',
+                padding: '0.45rem 1.1rem',
+                fontFamily: 'var(--font-sans)',
+                transition: 'background 0.2s ease, color 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            >
+              {userRole === 'mentor' ? '← Dashboard' : '← Home'}
+            </button>
+          )}
+          
           <button
-            onClick={() => setView('landing')}
+            onClick={handleLogout}
             style={{
               position: 'absolute',
-              left: 0,
+              right: 0,
               top: '50%',
               transform: 'translateY(-50%)',
               background: 'none',
-              border: '1.5px solid #000',
+              border: '1.5px solid #dc2626',
               borderRadius: '50px',
               cursor: 'pointer',
               fontSize: '0.85rem',
               fontWeight: '700',
-              color: 'var(--text-primary)',
+              color: '#dc2626',
               padding: '0.45rem 1.1rem',
               fontFamily: 'var(--font-sans)',
               transition: 'background 0.2s ease, color 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#000'; e.currentTarget.style.color = '#fff'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#dc2626'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#dc2626'; }}
           >
-            ← Home
+            Logout
           </button>
+
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0.5rem' }}>
             <img src="/AIvaluate-removebg-preview.png" alt="AI valuate Logo" style={{ height: '3.5rem' }} />
           </div>
@@ -552,6 +1065,19 @@ export default function App() {
             An exclusive AI powered platform for Hackathon Evaluation and Live Proctoring
           </p>
         </header>
+      )}
+
+      {/* VIEW: MENTOR DASHBOARD */}
+      {view === 'mentor_dashboard' && (
+        <MentorDashboard 
+          authToken={authToken} 
+          onLogout={handleLogout} 
+          API_BASE={API_BASE} 
+          onViewReport={(data) => {
+            setFinalReport(data);
+            setView('report');
+          }}
+        />
       )}
 
       {/* VIEW 0: LANDING PAGE */}
@@ -667,13 +1193,23 @@ export default function App() {
 
       {/* VIEW 2: PRIVACY CONSENT & VERIFICATION */}
       {view === 'consent' && (
-        <div className="glass-card" style={{ maxWidth: '650px', margin: '0 auto', width: '100%' }}>
+        <div className="glass-card" style={{ maxWidth: '750px', margin: '0 auto', width: '100%' }}>
           <h2 style={{ fontSize: '1.4rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.8rem', marginBottom: '1.2rem', color: 'var(--text-primary)' }}>
-            Verification & Privacy Consent
+            Proctoring Rules & Privacy Consent
           </h2>
 
-          <div style={{ background: 'rgba(0,0,0,0.02)', padding: '1.2rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'left', border: '1px solid var(--border-color)' }}>
-            <h3 style={{ fontSize: '1rem', color: '#4285f4', marginBottom: '0.5rem' }}>Signals, Not Surveillance</h3>
+          <div style={{ background: 'rgba(0,0,0,0.02)', padding: '1.5rem', borderRadius: '8px', marginBottom: '1.5rem', textAlign: 'left', border: '1px solid var(--border-color)' }}>
+            <h3 style={{ fontSize: '1.1rem', color: '#db4437', marginBottom: '1rem' }}>Strict Proctoring Regulations</h3>
+            <ul style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.6, paddingLeft: '1.2rem', marginBottom: '1.5rem' }}>
+              <li><strong>Face the Camera:</strong> You must stay within the camera frame at all times. Head movements (looking away for &gt;4s) will be penalized.</li>
+              <li><strong>No Background Voices:</strong> The system strictly monitors microphone audio. Speaking or background noise will trigger integrity flags.</li>
+              <li><strong>No Multiple Persons:</strong> Only you should be in the camera frame. Multiple faces will instantly flag the session.</li>
+              <li><strong>Stay Active:</strong> If you stop typing/interacting for more than 8 seconds, an inactivity warning will appear. Prolonged inactivity is flagged.</li>
+              <li><strong>No Tab Switching:</strong> Leaving the active browser tab will automatically pause the session and penalize your integrity score.</li>
+              <li><strong>No Copy-Pasting:</strong> Attempting to paste external code or text into the answer box will be flagged immediately.</li>
+            </ul>
+
+            <h3 style={{ fontSize: '1rem', color: '#4285f4', marginBottom: '0.5rem' }}>Privacy Notice (Signals, Not Surveillance)</h3>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
               This system does not record, upload, or transmit any video or audio feed to any server. Face and eye landmark detection happens purely inside your local browser tab. Only lightweight, anonymous, timestamped event telemetry is streamed to calculate integrity indicators.
             </p>
@@ -739,9 +1275,17 @@ export default function App() {
                   rows="5"
                   placeholder="Explain your approach and code structure here..."
                   value={answers[currentQuestionIndex] || ''}
-                  onChange={(e) => setAnswers({ ...answers, [currentQuestionIndex]: e.target.value })}
+                  onChange={(e) => {
+                    setAnswers({ ...answers, [currentQuestionIndex]: e.target.value });
+                    lastActivityRef.current = Date.now();
+                  }}
                   onPaste={handlePaste}
                 />
+                {inactivityCountdown !== null && (
+                  <div style={{ marginTop: '0.5rem', color: '#db4437', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                    ⚠️ Inactivity warning: You will be flagged in {inactivityCountdown} seconds...
+                  </div>
+                )}
               </div>
             </div>
 
@@ -749,7 +1293,11 @@ export default function App() {
               <button
                 className="btn btn-secondary"
                 disabled={currentQuestionIndex === 0}
-                onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
+                onClick={() => {
+                  setCurrentQuestionIndex(prev => prev - 1);
+                  lastActivityRef.current = Date.now();
+                  setInactivityCountdown(null);
+                }}
               >
                 Previous
               </button>
@@ -758,7 +1306,11 @@ export default function App() {
                 <button
                   className="btn btn-secondary"
                   disabled={!answers[currentQuestionIndex]}
-                  onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
+                  onClick={() => {
+                    setCurrentQuestionIndex(prev => prev + 1);
+                    lastActivityRef.current = Date.now();
+                    setInactivityCountdown(null);
+                  }}
                 >
                   Next Question
                 </button>
@@ -802,10 +1354,17 @@ export default function App() {
 
             {/* Camera feed */}
             <div className="glass-card" style={{ padding: '1rem', textAlign: 'center' }}>
-              <h3 style={{ fontSize: '0.9rem', marginBottom: '0.6rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0f9d58', display: 'inline-block' }}></span>
-                Live Local Proctor Feed
-              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#0f9d58', display: 'inline-block', boxShadow: '0 0 4px #0f9d58' }} />
+                  Camera
+                </span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4285f4', display: 'inline-block', boxShadow: '0 0 4px #4285f4' }} />
+                  Mic
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>LIVE</span>
+              </div>
               <div className="camera-container">
                 <video
                   ref={videoRef}
@@ -821,7 +1380,7 @@ export default function App() {
                   height="180"
                 />
                 <div className="camera-overlay">
-                  <span style={{ color: '#fff', fontSize: '0.75rem', textShadow: '1px 1px 2px #000' }}>Local Frame</span>
+                  <span style={{ color: '#fff', fontSize: '0.7rem', textShadow: '1px 1px 2px #000' }}>MediaPipe Active</span>
                 </div>
               </div>
             </div>
@@ -842,6 +1401,25 @@ export default function App() {
 
           </div>
 
+        </div>
+      )}
+
+      {/* VIEW: THANK YOU SCREEN */}
+      {view === 'thankyou' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', maxWidth: '600px', margin: '4rem auto', textAlign: 'center' }}>
+          <div className="glass-card" style={{ padding: '3rem' }}>
+            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
+            <h2 style={{ fontSize: '2rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>Thank You for Your Time!</h2>
+            <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', marginBottom: '2.5rem' }}>
+              Your viva has been successfully submitted and analyzed by the AI. The mentor has been notified.
+            </p>
+            <button
+              className="btn btn-primary"
+              onClick={() => setView('report')}
+            >
+              View Evaluation Report
+            </button>
+          </div>
         </div>
       )}
 
@@ -909,7 +1487,7 @@ export default function App() {
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {finalReport.evaluation_report.summary.outcome_evaluation.map((evalItem, index) => (
+              {(finalReport.evaluation_report.outcome_evaluation || finalReport.evaluation_report.summary?.outcome_evaluation || []).map((evalItem, index) => (
                 <div key={index} style={{ padding: '1rem', background: 'rgba(0,0,0,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
                     <span style={{ fontWeight: '500', color: 'var(--text-primary)', fontSize: '0.95rem' }}>{evalItem.outcome_text}</span>
@@ -997,7 +1575,46 @@ export default function App() {
 
             </div>
 
-            {/* Metadata logs */}
+          {/* Section 5: Viva Grading */}
+          {finalReport.viva_grading && finalReport.viva_grading.graded_answers && finalReport.viva_grading.graded_answers.length > 0 && (
+            <div className="glass-card" style={{ padding: '2rem', textAlign: 'left', marginTop: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.6rem', marginBottom: '1.2rem', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Viva Performance Evaluation</span>
+                <span style={{ color: '#4285f4' }}>{Math.round(finalReport.viva_grading.viva_score * 100)}%</span>
+              </h3>
+              
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontStyle: 'italic', marginBottom: '1.5rem' }}>
+                "{finalReport.viva_grading.viva_narrative}"
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {finalReport.viva_grading.graded_answers.map((ans, idx) => (
+                  <div key={idx} style={{ background: 'rgba(0,0,0,0.02)', padding: '1.2rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                      <span style={{ fontWeight: '500', fontSize: '0.95rem', color: 'var(--text-primary)' }}>Q: {ans.question}</span>
+                      <span className={`badge badge-${ans.score >= 7 ? 'low' : ans.score >= 5 ? 'medium' : 'high'}`}>
+                        {ans.score}/{ans.max_score}
+                      </span>
+                    </div>
+                    
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.8rem' }}>
+                      <strong>Student Answer:</strong> {ans.student_answer}
+                    </div>
+                    
+                    <div style={{ fontSize: '0.85rem', color: '#0f9d58', marginBottom: '0.8rem' }}>
+                      <strong>Feedback:</strong> {ans.feedback}
+                    </div>
+
+                    <div style={{ fontSize: '0.85rem', color: '#4285f4', background: 'rgba(66,133,244,0.1)', padding: '0.5rem', borderRadius: '4px' }}>
+                      <strong>Expected Concept:</strong> {ans.correct_concept}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Metadata logs */}
             <div style={{ display: 'flex', gap: '1.5rem', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-color)', paddingTop: '1rem' }}>
               <span>Files analyzed: <strong>{finalReport.metadata.files_analyzed}</strong></span>
               <span>Extraction time: <strong>{finalReport.metadata.extraction_time_ms}ms</strong></span>

@@ -15,6 +15,10 @@ build/
 backend/.env
 .env
 *.env
+backend/app.db
+*.db
+backend/app/data/uploads/
+backendruncmd
 
 # ── Node / Frontend ───────────────────────────────
 node_modules/
