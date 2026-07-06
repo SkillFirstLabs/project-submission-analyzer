@@ -11,6 +11,11 @@ from app.services.project_stats_service import analyze_project_stats
 from app.services.scoring_service import calculate_project_score
 from app.services.framework_service import detect_frameworks
 from app.services.code_quality_service import analyze_code_quality
+from app.services.pdf_service import generate_pdf_report
+from app.services.database_service import save_analysis, get_all_analysis
+from app.services.interview_service import generate_interview_questions
+from app.data.interview_questions import latest_questions
+import app.data.interview_questions as interview_data
 
 router = APIRouter()
 
@@ -19,7 +24,7 @@ router = APIRouter()
 async def analyze_submission(file: UploadFile = File(...)):
 
     # -----------------------------
-    # Create Upload Folder
+    # Upload ZIP
     # -----------------------------
     upload_dir = "uploads"
     os.makedirs(upload_dir, exist_ok=True)
@@ -137,10 +142,18 @@ Provide:
 
     ai_feedback = ask_gemini(prompt)
 
+    interview_questions = generate_interview_questions(
+        project_text,
+        detected_frameworks,
+        detected_skills
+    )
+
+    interview_data.latest_questions = interview_questions
+
     # -----------------------------
-    # Final Response
+    # Final Result
     # -----------------------------
-    return {
+    result = {
         "overall_score": score_result,
         "frameworks": detected_frameworks,
         "skills": detected_skills,
@@ -148,5 +161,57 @@ Provide:
         "readme": readme_result,
         "project_statistics": stats_result,
         "code_quality": code_quality,
-        "ai_feedback": ai_feedback
+        "ai_feedback": ai_feedback,
+        "interview_questions": interview_questions
+    }
+
+    # -----------------------------
+    # Generate PDF
+    # -----------------------------
+    pdf_path = os.path.join(
+        extract_folder,
+        "analysis_report.pdf"
+    )
+
+    generate_pdf_report(result, pdf_path)
+
+    result["pdf_report"] = pdf_path.replace("\\", "/")
+
+    # -----------------------------
+    # Save to SQLite
+    # -----------------------------
+    save_analysis(
+        project_name=file.filename,
+        score=score_result,
+        frameworks=detected_frameworks,
+        skills=detected_skills
+    )
+
+    return result
+
+
+# ==========================================
+# Analysis History API
+# ==========================================
+
+@router.get("/analysis-history")
+def analysis_history():
+
+    history = get_all_analysis()
+
+    result = []
+
+    for row in history:
+        result.append({
+            "id": row[0],
+            "project_name": row[1],
+            "overall_score": row[2],
+            "frameworks": row[3],
+            "skills": row[4],
+            "analysis_date": row[5]
+        })
+
+    return {
+        "total_records": len(result),
+        "history": result
     }

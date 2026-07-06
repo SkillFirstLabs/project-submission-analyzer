@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Project Submission Analyzer</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+
+        video{
+            border:2px solid black;
+            border-radius:8px;
+            margin-top:20px;
+        }
+
+        textarea{
+            width:100%;
+            margin-top:10px;
+            padding:10px;
+            font-size:15px;
+        }
+
+        #interviewSection{
+            display:none;
+            margin-top:30px;
+        }
+
+        pre{
+            white-space:pre-wrap;
+            text-align:left;
+            background:#f4f4f4;
+            padding:15px;
+            border-radius:8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>AI Project Submission Analyzer</h1>
+
+<p>Upload your Project ZIP File</p>
+
+<input
+type="file"
+id="zipFile"
+accept=".zip">
+
+<br><br>
+
+<button onclick="analyzeProject()">
+Analyze Project
+</button>
+
+<br><br>
+
+<div id="loading" style="display:none;">
+<h3>Analyzing Project...</h3>
+</div>
+
+<div id="result"></div>
+
+<div id="interviewSection">
+
+<hr>
+
+<h2>AI Mock Interview</h2>
+
+<h3 id="warning" style="color:red;">
+Warnings : 0
+</h3>
+
+<video
+id="camera"
+width="420"
+height="300"
+autoplay
+playsinline>
+</video>
+
+<br><br>
+
+<h2>AI Generated Interview Questions</h2>
+
+<pre id="questions"></pre>
+
+<h2>Your Answer</h2>
+
+<textarea
+rows="10"
+placeholder="Write your answer here..."></textarea>
+
+<br><br>
+
+<button onclick="submitInterview()">
+Submit Interview
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let warningCount = 0;
+let cameraStream = null;
+
+// ---------------------------
+
+async function analyzeProject(){
+
+    const file = document.getElementById("zipFile").files[0];
+
+    if(!file){
+
+        alert("Please select a ZIP file.");
+
+        return;
+
+    }
+
+    document.getElementById("loading").style.display = "block";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    const response = await fetch("/analyze-submission",{
+
+        method:"POST",
+
+        body:formData
+
+    });
+
+    const data = await response.json();
+
+    document.getElementById("loading").style.display = "none";
+
+    document.getElementById("result").innerHTML = `
+
+<hr>
+
+<h2>Analysis Result</h2>
+
+<h3>Overall Score</h3>
+
+<pre>${JSON.stringify(data.overall_score,null,2)}</pre>
+
+<h3>Frameworks</h3>
+
+<p>${data.frameworks.join(", ")}</p>
+
+<h3>Skills</h3>
+
+<ul>
+
+${data.skills.map(skill=>`<li>${skill.skill_name}</li>`).join("")}
+
+</ul>
+
+<h3>AI Feedback</h3>
+
+<textarea rows="12">${data.ai_feedback}</textarea>
+
+`;
+
+    document.getElementById("interviewSection").style.display = "block";
+
+    document.getElementById("questions").textContent = data.interview_questions;
+
+    navigator.mediaDevices.getUserMedia({
+
+        video:true
+
+    })
+
+    .then(function(stream){
+
+        cameraStream = stream;
+
+        document.getElementById("camera").srcObject = stream;
+
+    })
+
+    .catch(function(){
+
+        alert("Camera Permission Denied");
+
+    });
+
+}
+
+// ---------------------------
+
+document.addEventListener("visibilitychange", function(){
+
+    if(document.hidden){
+
+        warningCount++;
+
+        document.getElementById("warning").innerHTML =
+        "Warnings : " + warningCount;
+
+        alert("Warning! Tab Switching Detected.");
+
+    }
+
+});
+
+// ---------------------------
+
+window.onblur = function(){
+
+    warningCount++;
+
+    document.getElementById("warning").innerHTML =
+    "Warnings : " + warningCount;
+
+};
+
+// ---------------------------
+
+function submitInterview(){
+
+    if(cameraStream){
+
+        cameraStream.getTracks().forEach(track => track.stop());
+
+        document.getElementById("camera").srcObject = null;
+
+    }
+
+    alert("Interview Submitted Successfully!");
+
+    document.getElementById("interviewSection").style.display = "none";
+
+    document.getElementById("result").innerHTML += `
+        <h2 style="color:green;">
+            ✅ Interview Completed Successfully
+        </h2>
+    `;
+
+}
+
+</script>
+
+</body>
+
+</html>

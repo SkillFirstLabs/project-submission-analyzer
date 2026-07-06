@@ -1,19 +1,18 @@
-# Virtual Environment
-venv/
-
-# Python cache
+# Python
 __pycache__/
 *.pyc
 
-# Environment variables
+# Virtual Environment
+venv/
+
+# Environment Variables
 .env
 
-# Uploaded files
+# SQLite Database
+analysis_history.db
+
+# Uploads
 uploads/
 
 # VS Code
 .vscode/
-
-# OS files
-.DS_Store
-Thumbs.db

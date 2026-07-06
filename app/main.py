@@ -1,15 +1,22 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
 from app.routes.analyze import router as analyze_router
+from app.routes.ui import router as ui_router
+
+from app.services.database_service import initialize_database
+from app.routes.interview import router as interview_router
 
 app = FastAPI(
-    title="Project Submission AI Analyzer",
-    version="1.0.0"
+    title="AI Project Submission Analyzer",
+    version="1.0"
 )
 
-app.include_router(analyze_router)
+initialize_database()
 
-@app.get("/")
-def home():
-    return {
-        "message": "Project Submission AI Analyzer is Running!"
-    }
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+app.include_router(ui_router)
+
+app.include_router(analyze_router)
+app.include_router(interview_router)

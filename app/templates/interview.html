@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Mock Interview</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+
+        .question-box{
+            background:#f8f9fa;
+            padding:20px;
+            border-radius:10px;
+            margin-top:20px;
+            text-align:left;
+        }
+
+        textarea{
+            width:100%;
+            margin-top:10px;
+            padding:10px;
+            font-size:15px;
+            resize:vertical;
+        }
+
+        video{
+            border-radius:10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Mock Interview</h1>
+
+    <h3 id="warning" style="color:red;">
+        Warnings : 0
+    </h3>
+
+    <video
+        id="camera"
+        width="420"
+        height="300"
+        autoplay
+        playsinline>
+    </video>
+
+    <br><br>
+
+    <div class="question-box">
+
+        <h2>AI Generated Interview Questions</h2>
+
+        <pre style="white-space:pre-wrap;font-size:15px;">
+{{ questions }}
+        </pre>
+
+    </div>
+
+    <br>
+
+    <h2>Your Answer</h2>
+
+    <textarea
+        rows="12"
+        placeholder="Write your answer here..."></textarea>
+
+    <br><br>
+
+    <button onclick="submitInterview()">
+        Submit Interview
+    </button>
+
+</div>
+
+<script>
+
+let warningCount = 0;
+
+// ---------------- Webcam ----------------
+
+navigator.mediaDevices.getUserMedia({
+    video: true
+})
+.then(function(stream){
+    document.getElementById("camera").srcObject = stream;
+})
+.catch(function(){
+    alert("Camera permission denied.");
+});
+
+// ---------------- Tab Switch ----------------
+
+document.addEventListener("visibilitychange", function(){
+
+    if(document.hidden){
+
+        warningCount++;
+
+        document.getElementById("warning").innerHTML =
+        "Warnings : " + warningCount;
+
+        alert("Warning! Tab switching detected.");
+
+    }
+
+});
+
+// ---------------- Browser Focus ----------------
+
+window.onblur = function(){
+
+    warningCount++;
+
+    document.getElementById("warning").innerHTML =
+    "Warnings : " + warningCount;
+
+};
+
+// ---------------- Submit ----------------
+
+function submitInterview(){
+
+    alert("Interview Submitted Successfully!");
+
+    window.location.href="/";
+
+}
+
+</script>
+
+</body>
+
+</html>
