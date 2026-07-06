@@ -16,3 +16,4 @@ uploads/
 
 # VS Code
 .vscode/
+*.db
