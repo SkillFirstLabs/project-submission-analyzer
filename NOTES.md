@@ -1,0 +1,15 @@
+# Privacy and Architecture Notes
+
+This document details the privacy-preserving choices, user consent mechanisms, boundaries of access control, and current limitations in the AIvaluate system.
+
+### Event-Based vs. Video-Based Proctoring
+Unlike traditional proctoring systems that continuously stream raw video and audio feeds to a central server—creating massive data storage requirements and significant privacy intrusion—AIvaluate uses a purely **event-based proctoring model**. Tracking is executed entirely client-side in the student's browser using Google's **MediaPipe FaceMesh** library. The frontend processes camera frames locally, computes facial metrics (such as head turn angle, screen gaze, and presence), and generates discrete telemetry events only when thresholds are breached. The server receives only high-level, timestamped events (e.g., `gaze_off_screen`, `tab_switched`) with zero raw images, video frames, or audio recordings ever transmitted or stored.
+
+### Consent Management
+Student privacy is respected through explicit consent gathering before any telemetry monitoring occurs. The frontend presents a dedicated **Consent Verification Console** that students must explicitly review and accept. This client-side consent check is backed up by strict server-side validation. Following updates in **FIX 3**, the backend `/viva-session/start` endpoint strictly enforces that the request body contains `consent_acknowledged: true`. If this parameter is missing or false, the backend rejects the request immediately with an HTTP 400 Bad Request, ensuring that no proctoring session record is ever generated without recorded consent.
+
+### Biometric Identity Verification Limits
+The current implementation of biometric user verification uses a simplified webcam check. While the frontend fires an `id_verified` event after booting the webcam, this is currently a **placeholder simulation** (disclosed in **FIX 5**). It checks for webcam capability and presence but does not perform cryptographic or facial biometric matching. For production readiness, the system should capture a reference frame on initialization, send a secure hash or vector client-side, and run a comparison against a pre-registered student enrollment photo before permitting telemetry reporting to start.
+
+### Role-Based Access Control (RBAC) Boundaries
+To prevent bias, academic anxiety, and security leaks, proctoring metrics and evaluation scoring are strictly isolated from the student's view. Applying the boundaries defined in **FIX 1**, the `/viva-session/end` endpoint returns only a minimal acknowledgment response containing the session ID and completion status. All sensitive data (including raw integrity scores, risk categories, and specific telemetry flags) is stored in the database and never sent back to the student's browser. Access to this detailed proctoring report is restricted exclusively to authenticated users with the **Mentor** role via the secure mentor sessions query API (`/mentor/sessions/{session_id}`).

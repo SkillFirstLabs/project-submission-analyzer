@@ -61,3 +61,16 @@ def override_get_db(test_engine):
     app.dependency_overrides[get_db] = _get_db
     yield
     app.dependency_overrides.clear()
+
+import pytest_asyncio
+
+@pytest_asyncio.fixture
+async def db_session(test_engine):
+    AsyncSessionLocal = async_sessionmaker(
+        bind=test_engine,
+        class_=AsyncSession,
+        expire_on_commit=False,
+        autoflush=False
+    )
+    async with AsyncSessionLocal() as session:
+        yield session

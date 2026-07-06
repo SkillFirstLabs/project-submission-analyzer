@@ -547,6 +547,7 @@ export default function App() {
       setView('viva');
 
       // Trigger id_verified automatically for successful webcam boot
+      // NOTE: This is a placeholder identity check that verifies camera access only, not actual student identity. A production version should capture a reference frame client-side and compare it against a stored enrollment photo before firing id_verified.
       setTimeout(() => {
         postTelemetryEvent('id_verified', 0.0);
       }, 1000);

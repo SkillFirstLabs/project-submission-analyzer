@@ -85,9 +85,16 @@ async def save_session_dict(db: AsyncSession, session_id: str, session_dict: dic
 @router.post("/viva-session/start")
 async def start_session(
     session_id: str = Body(..., embed=True),
+    consent_acknowledged: bool = Body(..., embed=True),
     current_user: User = Depends(require_role("student")),
     db: AsyncSession = Depends(get_db)
 ):
+    if not consent_acknowledged:
+        raise HTTPException(
+            status_code=400,
+            detail="Consent must be acknowledged before starting a proctored session."
+        )
+
     # The session_id here is actually the submission_id for simplicity, since 1 submission = 1 viva
     submission_result = await db.execute(select(Submission).where(Submission.id == session_id))
     submission = submission_result.scalars().first()
@@ -126,8 +133,8 @@ async def start_session(
     
     # Using the mock dict helper for compatibility with engine
     session_dict = await get_full_session_dict(db, session_id)
-    # The original engine didn't take session_dict directly, it used session_store.
-    # We must patch process_event to take session_dict and return mutated session_dict + new_flags.
+    process_event(session_id, start_event, session_dict)
+    await save_session_dict(db, session_id, session_dict)
     
     return {"status": "session_started", "session_id": session_id}
 
@@ -144,6 +151,13 @@ async def register_event(
     if session_dict.get("is_ended"):
         raise HTTPException(status_code=400, detail="Cannot log event to an already closed session.")
         
+    if event.event_type not in ["id_verified", "id_failed", "interview_started"]:
+        if session_dict.get("id_check") == "pending":
+            raise HTTPException(
+                status_code=409,
+                detail="Identity verification must complete before proctoring events can be logged."
+            )
+            
     try:
         # Patch to use pure functions instead of global session_store
         new_flags = process_event(event.session_id, event.model_dump(), session_dict)
@@ -188,18 +202,8 @@ async def end_session(
     db_session.viva_grading = viva_grading
     await db.commit()
     
-    # Return nothing sensitive to student. Wait, this is a mentor endpoint. Mentor can see everything.
-    merged_response = {
-        "project_title": session_dict["project_title"],
-        "suggested_skills": session_dict["suggested_skills"],
-        "evaluation_report": session_dict["evaluation_report"],
-        "proctoring_report": proctoring_report,
-        "viva_grading": viva_grading,
-        "metadata": session_dict["metadata"],
-        "processing_time_ms": 0.0
-    }
-    
-    return merged_response
+    # Return only a minimal success confirmation to the student to maintain RBAC boundaries
+    return {"status": "viva_completed", "session_id": session_id}
 
 @router.get("/viva-session/{session_id}/stream")
 async def stream_session_events(
