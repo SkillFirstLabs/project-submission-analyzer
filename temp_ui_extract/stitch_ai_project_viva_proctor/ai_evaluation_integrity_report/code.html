@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mentor Evaluation Report | EvalAI</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Syne:wght@700;800&amp;family=JetBrains+Mono:wght@400&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-container-highest": "#e0e3e5",
+                "secondary-fixed-dim": "#bec6e0",
+                "secondary": "#565e74",
+                "on-secondary-container": "#5c647a",
+                "on-primary-fixed": "#00174b",
+                "on-secondary-fixed-variant": "#3f465c",
+                "surface-container-high": "#e6e8ea",
+                "inverse-primary": "#b4c5ff",
+                "surface": "#f7f9fb",
+                "secondary-container": "#dae2fd",
+                "outline-variant": "#c2c6d9",
+                "on-tertiary-fixed-variant": "#38485d",
+                "on-background": "#191c1e",
+                "on-secondary-fixed": "#131b2e",
+                "surface-container-low": "#f2f4f6",
+                "on-error-container": "#93000a",
+                "surface-variant": "#e0e3e5",
+                "tertiary-container": "#607087",
+                "inverse-on-surface": "#eff1f3",
+                "surface-container": "#eceef0",
+                "surface-container-lowest": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-secondary": "#ffffff",
+                "background": "#f7f9fb",
+                "on-primary": "#ffffff",
+                "inverse-surface": "#2d3133",
+                "primary-fixed-dim": "#b4c5ff",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed": "#dae2fd",
+                "on-tertiary-fixed": "#0b1c30",
+                "primary-container": "#0062ff",
+                "on-primary-fixed-variant": "#003ea8",
+                "surface-bright": "#f7f9fb",
+                "outline": "#737687",
+                "surface-dim": "#d8dadc",
+                "tertiary": "#48586d",
+                "on-primary-container": "#f3f3ff",
+                "tertiary-fixed": "#d3e4fe",
+                "error": "#ba1a1a",
+                "primary-fixed": "#dbe1ff",
+                "primary": "#004cca",
+                "on-error": "#ffffff",
+                "surface-tint": "#0053da",
+                "on-tertiary-container": "#eef3ff",
+                "on-surface": "#191c1e",
+                "on-surface-variant": "#424656",
+                "tertiary-fixed-dim": "#b7c8e1"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "md": "24px",
+                "base": "8px",
+                "lg": "40px",
+                "xs": "4px",
+                "sm": "12px",
+                "xl": "64px",
+                "container-max": "1280px",
+                "gutter": "24px",
+                "grid-gutter": "20px",
+                "stack-gap": "16px",
+                "section-margin": "40px",
+                "container-padding": "24px"
+        },
+        "fontFamily": {
+                "headline-lg-mobile": ["Syne"],
+                "body-sm": ["Inter"],
+                "headline-lg": ["Syne"],
+                "body-lg": ["Inter"],
+                "display": ["Syne"],
+                "headline-sm": ["Syne"],
+                "label-lg": ["Inter"],
+                "label-md": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-md": ["Syne"],
+                "code-md": ["JetBrains Mono"]
+        },
+        "fontSize": {
+                "headline-lg-mobile": ["2.5rem", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                "body-sm": ["0.875rem", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                "headline-lg": ["3.5rem", {"lineHeight": "1.2", "letterSpacing": "-0.015em", "fontWeight": "800"}],
+                "body-lg": ["1.125rem", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400"}],
+                "display": ["4.5rem", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "headline-sm": ["1.5rem", {"lineHeight": "1.4", "letterSpacing": "0em", "fontWeight": "700"}],
+                "label-lg": ["0.875rem", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "label-md": ["0.75rem", {"lineHeight": "1", "letterSpacing": "0em", "fontWeight": "500"}],
+                "body-md": ["1rem", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                "headline-md": ["2rem", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "headline-xl": ["3rem", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}]
+        }
+      },
+    },
+  }
+</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .status-border-emerald { border-left: 4px solid #10b981; }
+        .status-border-amber { border-left: 4px solid #f59e0b; }
+        .status-border-rose { border-left: 4px solid #ef4444; }
+        .glass-panel { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.8); }
+        .pulse-emerald { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        .scrolling-log::-webkit-scrollbar { width: 4px; }
+        .scrolling-log::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 z-50 w-full bg-surface border-b border-outline-variant flex justify-between items-center px-grid-gutter h-16">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md text-primary">EvalAI</span>
+<nav class="hidden md:flex space-x-6 ml-8">
+<a class="text-primary border-b-2 border-primary font-body-md" href="#">Reports</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Submissions</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBD7btHXKJYFiMs4CPoE-ge7kBmxJp2iRO7_dWSCacP0wY-BwaC8Po3Di9tENYR_99FH8KtfeER7TsJ7-vdbrC53damsCGTAcUm9fG7B0yHg666YZSk9F5z8Tjh6xy5BWz_TBZ_eirWhvWiCaqegcieum2rYjEV5q3n2iTMlr3fkcv6nUitBPIPBK1lD8sh27Ru0hvvAzq5gYoWo9rrG53wvwoTHXymSREhog0YWGe2WHyHOyy88Q"/>
+</div>
+</div>
+</header>
+<!-- Sidebar (Desktop Only) -->
+<aside class="fixed left-0 top-0 h-full w-[280px] hidden md:flex flex-col bg-surface-container border-r border-outline-variant p-4 space-y-4 pt-20">
+<div class="flex items-center gap-3 px-2 mb-6">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<p class="font-headline-sm text-headline-sm text-primary">EvalAI</p>
+<p class="font-label-md text-label-md opacity-70">Expert Facilitator</p>
+</div>
+</div>
+<nav class="flex-grow space-y-2">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-label-lg text-label-lg">Submissions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 bg-primary-container text-on-primary-container font-bold rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-lg text-label-lg">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-lg text-label-lg">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+<span class="font-label-lg text-label-lg">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-[280px] pt-20 pb-24 px-grid-gutter">
+<div class="max-w-6xl mx-auto space-y-section-margin">
+<!-- Header Section: Project Summary -->
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="font-label-md text-label-md text-primary px-3 py-1 bg-primary-fixed rounded-full mb-2 inline-block">Evaluation Result</span>
+<h1 class="font-headline-xl text-headline-xl text-on-background">Distributed Systems: Auth Middleware Project</h1>
+<p class="text-on-surface-variant font-body-lg mt-2 max-w-2xl">A comprehensive technical assessment of the submitted ZIP archive and proctored viva session.</p>
+</div>
+<div class="flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant min-w-[200px]">
+<span class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Alignment Score</span>
+<div class="relative flex items-center justify-center">
+<svg class="w-20 h-20 transform -rotate-90">
+<circle class="text-surface-container-high" cx="40" cy="40" fill="transparent" r="36" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-primary" cx="40" cy="40" fill="transparent" r="36" stroke="currentColor" stroke-dasharray="226.2" stroke-dashoffset="31.6" stroke-width="6"></circle>
+</svg>
+<span class="absolute font-headline-md text-headline-md text-on-surface">86%</span>
+</div>
+</div>
+</header>
+<!-- Section 1: Suggested Skills (Bento Style) -->
+<section class="space-y-stack-gap">
+<h2 class="font-headline-sm text-headline-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                    Skill Competency Mapping
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-grid-gutter">
+<!-- Python Skill Card -->
+<div class="bg-surface-container-lowest p-container-padding rounded-xl shadow-sm border border-outline-variant hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-sm text-headline-sm">Python</h3>
+<p class="text-on-surface-variant font-body-sm">Advanced Implementation &amp; Logic</p>
+</div>
+<span class="text-headline-sm text-primary">92%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full mb-6 overflow-hidden">
+<div class="bg-primary h-full transition-all duration-1000" style="width: 92%"></div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="font-label-md text-label-md text-primary block mb-1">Rationale</span>
+<p class="text-on-surface-variant font-body-md italic leading-relaxed">
+                                "Candidate demonstrated exceptional proficiency in Python asynchronous patterns, specifically with asyncio loops and type hinting throughout the middleware codebase."
+                            </p>
+</div>
+</div>
+<!-- FastAPI Skill Card -->
+<div class="bg-surface-container-lowest p-container-padding rounded-xl shadow-sm border border-outline-variant hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-headline-sm text-headline-sm">FastAPI</h3>
+<p class="text-on-surface-variant font-body-sm">Framework Architecture</p>
+</div>
+<span class="text-headline-sm text-primary">88%</span>
+</div>
+<div class="w-full bg-surface-container-high h-2 rounded-full mb-6 overflow-hidden">
+<div class="bg-primary h-full transition-all duration-1000" style="width: 88%"></div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="font-label-md text-label-md text-primary block mb-1">Rationale</span>
+<p class="text-on-surface-variant font-body-md italic leading-relaxed">
+                                "Correct usage of Dependency Injection patterns and Starlette-compatible middleware. Effective handling of Pydantic models for request validation."
+                            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Technical Evaluation Outcome Cards -->
+<section class="space-y-stack-gap">
+<h2 class="font-headline-sm text-headline-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">terminal</span>
+                    Technical Integrity Check
+                </h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-grid-gutter">
+<!-- Outcome Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm status-border-emerald flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-emerald-100 text-emerald-700 font-label-md text-label-md px-2 py-0.5 rounded-full">Met</span>
+<span class="text-on-surface-variant font-label-md">Security Protocol</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm mb-3">JWT Authentication</h4>
+<p class="text-on-surface-variant font-body-sm mb-4 line-clamp-3">The implementation correctly decodes and validates incoming tokens before granting access to protected routes.</p>
+</div>
+<div class="bg-inverse-surface text-surface-variant p-3 rounded-lg font-code-md text-code-md">
+<span class="text-primary-fixed-dim text-xs block mb-1">Citation</span>
+                            'Met: middleware/auth.py handles JWT'
+                        </div>
+</div>
+<!-- Outcome Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm status-border-amber flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-amber-100 text-amber-700 font-label-md text-label-md px-2 py-0.5 rounded-full">Partial</span>
+<span class="text-on-surface-variant font-label-md">Error Handling</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm mb-3">Graceful Degradation</h4>
+<p class="text-on-surface-variant font-body-sm mb-4 line-clamp-3">Database connection timeouts are handled, but global exception handlers miss edge-case HTTP errors.</p>
+</div>
+<div class="bg-inverse-surface text-surface-variant p-3 rounded-lg font-code-md text-code-md">
+<span class="text-primary-fixed-dim text-xs block mb-1">Citation</span>
+                            'Partial: core/errors.py missing retry logic'
+                        </div>
+</div>
+<!-- Outcome Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm status-border-emerald flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-emerald-100 text-emerald-700 font-label-md text-label-md px-2 py-0.5 rounded-full">Met</span>
+<span class="text-on-surface-variant font-label-md">Performance</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm mb-3">Async Operations</h4>
+<p class="text-on-surface-variant font-body-sm mb-4 line-clamp-3">All I/O operations utilize non-blocking calls to prevent event loop starvation during peak loads.</p>
+</div>
+<div class="bg-inverse-surface text-surface-variant p-3 rounded-lg font-code-md text-code-md">
+<span class="text-primary-fixed-dim text-xs block mb-1">Citation</span>
+                            'Met: app/main.py implements async await'
+                        </div>
+</div>
+</div>
+</section>
+<!-- Section 3: Proctoring Report -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-grid-gutter">
+<div class="lg:col-span-8 space-y-stack-gap">
+<h2 class="font-headline-sm text-headline-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                        Viva Proctoring Session
+                    </h2>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="aspect-video relative bg-on-background group overflow-hidden">
+<img alt="Proctoring Stream" class="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWk1myeFda0hOd9f2C2kYVFLrJzazEnkuicdgU3cyICsODNsczz-2gNX7PEH4fNmttcdZWIBuFJuPIRDYi_xBS2wUmQTd51vVqjEuvfnloW8L36MZ04S-iMmCiVzTD7e6EbN7MnC8qVhl3ZqVnPuDQ4r2YrfIxJcXLLckYNCZsmzscAaX6YvTm9-GUGxnPuhFcXW3Ow7w4W3DhizVoMN1B3kDDjlUJBsP8c3iUUJqRnfamMIugcg"/>
+<div class="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-background/80 glass-panel rounded-full border border-outline-variant">
+<span class="w-2 h-2 bg-emerald-500 rounded-full pulse-emerald"></span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Live Monitor Active</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
+<div class="flex items-center gap-4 text-white">
+<span class="material-symbols-outlined text-rose-400">warning</span>
+<span class="font-body-md">Flag detected at 09:42:15</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 space-y-stack-gap">
+<h2 class="font-headline-sm text-headline-sm opacity-0 lg:block hidden">Status</h2>
+<div class="flex flex-col h-full gap-stack-gap">
+<!-- Integrity Metrics -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant">
+<div class="flex justify-between items-center mb-6">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Integrity Score</p>
+<p class="text-headline-xl font-headline-xl">0.86</p>
+</div>
+<div class="px-3 py-1 bg-emerald-100 text-emerald-700 font-bold rounded-lg text-sm">Low Risk</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant font-body-sm">Identity Verified</span>
+<span class="material-symbols-outlined text-emerald-500">check_circle</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant font-body-sm">Environment Safe</span>
+<span class="material-symbols-outlined text-emerald-500">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Event Log -->
+<div class="bg-inverse-surface text-surface-variant p-6 rounded-xl shadow-sm flex-grow flex flex-col">
+<p class="font-label-md text-label-md mb-4 text-primary-fixed-dim uppercase tracking-wider">AI Detection Log</p>
+<div class="scrolling-log overflow-y-auto space-y-3 font-code-md text-code-md max-h-[300px]">
+<div class="flex gap-3">
+<span class="opacity-40">09:15</span>
+<span>Session started</span>
+</div>
+<div class="flex gap-3 text-emerald-400">
+<span class="opacity-40">09:18</span>
+<span>Face identification verified</span>
+</div>
+<div class="flex gap-3 text-amber-400">
+<span class="opacity-40">09:30</span>
+<span>Tab switch detected (1.2s)</span>
+</div>
+<div class="flex gap-3 text-rose-400">
+<span class="opacity-40">09:42</span>
+<span>Gaze off-screen: 4.2s</span>
+</div>
+<div class="flex gap-3">
+<span class="opacity-40">09:55</span>
+<span>Screen sharing active</span>
+</div>
+<div class="flex gap-3">
+<span class="opacity-40">10:05</span>
+<span>Session concluded</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Metadata -->
+<footer class="md:ml-[280px] bg-surface-container-low border-t border-outline-variant px-grid-gutter py-8">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex gap-8">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Tokens Consumed</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">14,284</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Extraction Time</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">2.4s</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1 uppercase tracking-wider">Model Version</p>
+<p class="font-headline-sm text-headline-sm text-on-surface">Eval-4.5.1</p>
+</div>
+</div>
+<div class="text-center md:text-right">
+<p class="text-on-surface-variant font-body-sm">© 2024 EvalAI Systems. All technical audits certified.</p>
+<div class="flex gap-4 justify-center md:justify-end mt-2">
+<button class="text-primary hover:underline font-label-lg text-label-lg uppercase tracking-widest">Download PDF</button>
+<button class="text-primary hover:underline font-label-lg text-label-lg uppercase tracking-widest">Share Report</button>
+</div>
+</div>
+</div>
+</footer>
+<!-- Bottom Nav (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center px-4 py-3 bg-surface border-t border-outline-variant shadow-lg rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="font-label-md text-label-md">Submissions</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple intersection observer for reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-4');
+            observer.observe(section);
+        });
+
+        // Toggle mobile menu logic if needed or micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.95)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>
