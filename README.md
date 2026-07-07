@@ -1,3 +1,4 @@
+![AIvaluate Logo](frontend/public/AIvaluate-removebg-preview.png)
 # AIvaluate: Project Submission & Proctoring Engine
 
 This system uses AI to analyze student codebase submissions, generate viva questions, and conduct a live proctored interview. 
