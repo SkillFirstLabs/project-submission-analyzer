@@ -21,6 +21,7 @@ from app.schemas import (
     AnalyzeSubmissionResponse, SubmissionMetadata, EvaluationReport,
     VivaStartRequest, VivaStartResponse, VivaEvent, VivaEventAck, VivaEndRequest, AnsweredQuestion, CombinedReport,
 )
+import httpx
 
 app = FastAPI(title="Project Submission AI Analyzer", version="1.0.0")
 
@@ -41,6 +42,72 @@ def _load_catalog() -> list:
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/api-status")
+async def api_status():
+    """
+    Test endpoint to check if OpenRouter API is configured and accessible.
+    Returns connection status, configuration details, and performs a test call.
+    """
+    status = {
+        "api_configured": bool(settings.OPENROUTER_API_KEY),
+        "model": settings.OPENROUTER_MODEL,
+        "api_key_present": bool(settings.OPENROUTER_API_KEY),
+        "api_key_length": len(settings.OPENROUTER_API_KEY) if settings.OPENROUTER_API_KEY else 0,
+        "connection_test": "not_tested",
+        "error": None
+    }
+    
+    if not settings.OPENROUTER_API_KEY:
+        status["connection_test"] = "failed"
+        status["error"] = "OPENROUTER_API_KEY is not configured in .env file"
+        return JSONResponse(content=status, status_code=500)
+    
+    # Perform a minimal test call to OpenRouter
+    try:
+        headers = {
+            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "http://localhost:8000",
+            "X-Title": "Project Submission AI Analyzer - Connection Test"
+        }
+        
+        payload = {
+            "model": settings.OPENROUTER_MODEL,
+            "messages": [
+                {"role": "user", "content": "Reply with just the word 'connected'"}
+            ],
+            "max_tokens": 10
+        }
+        
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+        status["connection_test"] = "success"
+        status["response_received"] = True
+        status["model_used"] = data.get("model", settings.OPENROUTER_MODEL)
+        
+    except httpx.HTTPStatusError as e:
+        status["connection_test"] = "failed"
+        status["error"] = f"API returned error: {e.response.status_code} - {e.response.text[:200]}"
+        return JSONResponse(content=status, status_code=502)
+    except httpx.RequestError as e:
+        status["connection_test"] = "failed"
+        status["error"] = f"Network error: {str(e)}"
+        return JSONResponse(content=status, status_code=502)
+    except Exception as e:
+        status["connection_test"] = "failed"
+        status["error"] = f"Unexpected error: {str(e)}"
+        return JSONResponse(content=status, status_code=502)
+    
+    return JSONResponse(content=status)
 
 
 @app.post("/analyze-submission", response_model=AnalyzeSubmissionResponse)

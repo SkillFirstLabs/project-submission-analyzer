@@ -1,275 +1,51 @@
-# ============================================================
-# ProctorAI - Git Ignore Configuration
-# Protects sensitive data, API keys, and environment files
-# ============================================================
-
-# ============================================================
-# Environment Variables & Secrets
-# ============================================================
+# Environment & Secrets
 .env
 .env.local
-.env.development
-.env.test
-.env.production
-.env.*.local
-*.env
-env.py
-secrets.py
-config.local.py
-
-# API Keys & Credentials
 *.key
 *.pem
-*.p12
-*.pfx
-*.cer
-*.crt
-api_keys.json
 credentials.json
-secrets.json
-.secrets
-.credentials
 
-# ============================================================
 # Python
-# ============================================================
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
-
-# Distribution / packaging
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
 .pytest_cache/
-.hypothesis/
+.coverage
 
 # Virtual environments
 venv/
 env/
-ENV/
-env.bak/
-venv.bak/
 .venv/
-virtualenv/
 
-# PyCharm
+# IDE
 .idea/
-
-# VS Code
 .vscode/
 *.code-workspace
 
-# Spyder
-.spyderproject
-.spyproject
-
-# Rope
-.ropeproject
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre
-.pyre/
-
-# pytype
-.pytype/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb
-
-# ============================================================
-# FastAPI / Uvicorn
-# ============================================================
+# Database
 *.db
 *.sqlite
-*.sqlite3
-*.db-shm
-*.db-wal
 
 # Logs
-logs/
 *.log
-log.txt
+logs/
 
-# ============================================================
-# Node.js (if using any Node tools)
-# ============================================================
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
-.eslintcache
-.yarn-integrity
-
-# ============================================================
-# Operating System Files
-# ============================================================
-# macOS
+# OS Files
 .DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-
-# Windows
 Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-*.stackdump
-[Dd]esktop.ini
-$RECYCLE.BIN/
-*.lnk
-
-# Linux
-*~
-.fuse_hidden*
-.directory
-.Trash-*
-.nfs*
-
-# ============================================================
-# Temporary Files
-# ============================================================
-*.tmp
-*.temp
 *.swp
-*.swo
-*~
-.~lock.*
 
-# ============================================================
-# Project Specific
-# ============================================================
-# Uploaded files (user submissions)
+# Project specific
 uploads/
 temp_uploads/
 extracted_files/
 submissions/
-temp_ui_extract/
 
-# Test files
-sample_test.zip
-todo_app_sample.zip
-test_*.zip
-*.test.zip
-
-# Generated reports
-reports/
-*.pdf
-evaluation_reports/
-
-# Cached data
-.cache/
-cache/
-*.cache
-
-# Session data
-sessions/
-*.session
-
-# ============================================================
-# AI / ML Models (if storing locally)
-# ============================================================
-models/
-*.h5
-*.pkl
-*.model
-*.weights
-*.onnx
-*.pt
-*.pth
-
-# ============================================================
-# Database
-# ============================================================
-*.db
-*.sqlite
-*.sqlite3
-database.db
-local.db
-
-# ============================================================
-# Backup Files
-# ============================================================
-*.bak
-*.backup
-*.old
-*.orig
-backup/
-backups/
-
-# ============================================================
-# Documentation Build
-# ============================================================
-docs/_build/
-docs/.doctrees/
-site/
-
-# ============================================================
-# Docker
-# ============================================================
-docker-compose.override.yml
-.dockerignore
-
-# ============================================================
-# Git
-# ============================================================
-*.orig
-*.rej
-.git-rewrite/
-
-# ============================================================
-# Security Scans
-# ============================================================
-.trivy/
-.snyk
-.bandit
-
-# ============================================================
-# KEEP THESE FILES (explicitly not ignored)
-# ============================================================
+# Keep these
 !.env.example
 !.gitignore
-!.gitattributes
 !README.md
