@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Project Submission AI Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>Project Submission AI Analyzer</h1>
+
+            <p>
+                Analyze student projects and conduct
+                proctored AI viva sessions.
+            </p>
+        </header>
+
+
+        <section class="card">
+
+            <h2>Project Submission</h2>
+
+            <form id="submissionForm">
+
+                <label for="projectTitle">
+                    Project Title
+                </label>
+
+                <input
+                    type="text"
+                    id="projectTitle"
+                    required
+                >
+
+
+                <label for="projectDescription">
+                    Project Description
+                </label>
+
+                <textarea
+                    id="projectDescription"
+                    rows="4"
+                ></textarea>
+
+
+                <label for="projectOutcomes">
+                    Project Outcomes
+                </label>
+
+                <textarea
+                    id="projectOutcomes"
+                    rows="5"
+                    required
+                ></textarea>
+
+
+                <label for="questionsPerSkill">
+                    Questions Per Skill
+                </label>
+
+                <input
+                    type="number"
+                    id="questionsPerSkill"
+                    value="2"
+                    min="2"
+                    required
+                >
+
+
+                <label for="zipFile">
+                    Upload Project ZIP
+                </label>
+
+                <input
+                    type="file"
+                    id="zipFile"
+                    accept=".zip"
+                    required
+                >
+
+
+                <button type="submit">
+                    Analyze Project
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section
+            id="loadingSection"
+            class="card hidden"
+        >
+            <h2>Analyzing Project...</h2>
+
+            <p>
+                Please wait while the project is being analyzed.
+            </p>
+        </section>
+
+
+        <section id="resultSection" class="card hidden">
+
+    <h2>Analysis Dashboard</h2>
+
+    <div class="result-box">
+        <h3>Project Information</h3>
+        <div id="projectInfo"></div>
+    </div>
+
+    <div class="result-box">
+        <h3>Detected Skills</h3>
+        <div id="skillsResult"></div>
+    </div>
+
+    <div class="result-box">
+        <h3>Viva Questions</h3>
+        <div id="questionsResult"></div>
+    </div>
+
+    <div class="result-box">
+        <h3>Outcome Evaluation</h3>
+        <div id="outcomesResult"></div>
+    </div>
+
+    <div class="result-box">
+        <h3>Overall Evaluation</h3>
+        <div id="summaryResult"></div>
+    </div>
+
+</section>
+
+<section id="vivaEvaluationSection" class="report-card" style="display: none;">
+    <h2>Viva Evaluation Report</h2>
+    <div class="viva-score-container">
+        <div id="vivaScoreCircle" class="viva-score-circle">
+            0%
+        </div>
+        <div>
+            <h3>Viva Performance</h3>
+            <p>
+                <strong>Performance Level:</strong>
+                <span id="vivaPerformanceLevel">-</span>
+            </p>
+            <p>
+                <strong>Total Questions:</strong>
+                <span id="vivaTotalQuestions">0</span>
+            </p>
+        </div>
+    </div>
+    <div id="evaluatedAnswersContainer"></div>
+</section>
+
+<section id="finalAssessmentSection" class="card hidden">
+    <h2>Final Assessment Report</h2>
+    <div class="final-score-grid">
+        <div class="final-score-card">
+            <h3>Project Alignment</h3>
+            <div
+                id="finalProjectScore"
+                class="final-score-value"
+            >
+                0%
+            </div>
+        </div>
+        <div class="final-score-card">
+            <h3>Viva Performance</h3>
+            <div
+                id="finalVivaScore"
+                class="final-score-value"
+            >
+                0%
+            </div>
+        </div>
+        <div class="final-score-card">
+            <h3>Integrity Score</h3>
+            <div
+                id="finalIntegrityScore"
+                class="final-score-value"
+            >
+                0%
+            </div>
+        </div>
+    </div>
+    <div class="result-box">
+        <h3>Overall Assessment</h3>
+        <p>
+            <strong>Final Score:</strong>
+            <span id="finalOverallScore">0%</span>
+        </p>
+        <p>
+            <strong>Performance Level:</strong>
+            <span id="finalPerformanceLevel">-</span>
+        </p>
+        <p>
+            <strong>Integrity Risk:</strong>
+            <span id="finalRiskLevel">-</span>
+        </p>
+        <p>
+            <strong>Recommendation:</strong>
+            <span id="finalRecommendation">-</span>
+        </p>
+    </div>
+    <div class="summary-columns">
+        <div class="result-box">
+            <h3>Strengths</h3>
+            <ul id="finalStrengths"></ul>
+        </div>
+        <div class="result-box">
+            <h3>Areas for Improvement</h3>
+            <ul id="finalGaps"></ul>
+        </div>
+    </div>
+</section>
+
+
+        <section class="card">
+
+    <h2>Proctored Viva Session</h2>
+
+    <p id="sessionStatus">
+        No active viva session.
+    </p>
+
+    <p>
+        Session ID:
+        <strong id="sessionIdDisplay">None</strong>
+    </p>
+
+
+    <div id="cameraSection" class="camera-section hidden">
+
+        <h3>Live Proctoring Camera</h3>
+
+        <div class="camera-container">
+
+            <video
+                id="cameraVideo"
+                autoplay
+                muted
+                playsinline
+            ></video>
+
+            <div id="cameraStatus" class="camera-status">
+                Camera inactive
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="vivaWarning"
+        class="viva-warning hidden"
+    ></div>
+
+
+    <!-- VIVA QUESTION SECTION -->
+
+    <div id="vivaQuestionSection" class="viva-question-section">
+
+        <h2>Viva Questions</h2>
+
+        <div id="questionProgress">
+            No question loaded
+        </div>
+
+        <div class="question-card">
+
+            <p id="questionType">
+                Question Type
+            </p>
+
+            <h3 id="currentQuestion">
+                Start the viva to view questions.
+            </h3>
+
+            <p id="questionSkill"></p>
+
+            <textarea
+                id="vivaAnswer"
+                rows="5"
+                placeholder="Enter your answer here..."
+                disabled
+            ></textarea>
+
+            <button
+                id="nextQuestionButton"
+                type="button"
+                disabled
+            >
+                Submit Answer & Next
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <button
+        id="startVivaButton"
+        type="button"
+    >
+        Start Viva
+    </button>
+
+
+    <button
+        id="endVivaButton"
+        type="button"
+        disabled
+    >
+        End Viva
+    </button>
+
+</section>
+
+
+<section
+    id="proctoringResultSection"
+    class="card hidden"
+>
+
+    <h2>Proctoring Report</h2>
+
+    <div id="proctoringResult"></div>
+
+</section>
+
+    </div>
+
+
+    <script type="module" src="/static/app.js"></script>
+
+</body>
+</html>

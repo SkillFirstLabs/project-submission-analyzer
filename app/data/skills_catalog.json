@@ -1,0 +1,26 @@
+[
+    {
+        "skill_id": "uuid-1",
+        "skill_name": "Python"
+    },
+    {
+        "skill_id": "uuid-2",
+        "skill_name": "FastAPI"
+    },
+    {
+        "skill_id": "uuid-3",
+        "skill_name": "PostgreSQL"
+    },
+    {
+        "skill_id": "uuid-4",
+        "skill_name": "JavaScript"
+    },
+    {
+        "skill_id": "uuid-5",
+        "skill_name": "HTML"
+    },
+    {
+        "skill_id": "uuid-6",
+        "skill_name": "CSS"
+    }
+]
