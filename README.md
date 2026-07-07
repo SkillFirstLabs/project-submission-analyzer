@@ -68,7 +68,7 @@ static/
   ├── app.js            # Frontend logic
   └── style.css         # Styling
 
-data/
+data/end the 
   └── skill_catalog.json # Skills database
 
 tests/
